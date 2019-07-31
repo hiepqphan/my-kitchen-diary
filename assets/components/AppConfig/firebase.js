@@ -5,7 +5,7 @@ const firebase = Object.freeze({
   authDomain: "my-kitchen-diary.firebaseapp.com",
   databaseURL: "https://my-kitchen-diary.firebaseio.com",
   projectId: "my-kitchen-diary",
-  storageBucket: "",
+  storageBucket: "gs://my-kitchen-diary.appspot.com",
   messagingSenderId: "562769472254",
   appId: "1:562769472254:web:b782ac071b879be8"
 });

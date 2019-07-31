@@ -1,4 +1,5 @@
 import * as firebase from "firebase";
+import "firebase/firebase-firestore";
 
 import { config } from "../AppConfig/config";
 
