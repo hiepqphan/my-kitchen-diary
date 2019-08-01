@@ -15,6 +15,7 @@ import { IconCamera, IconPlus, IconMinusRound, IconChevronLeft } from "../../../
 import Auth from "../../Authentication/authentication";
 import KeyboardSafeView from "../../UI/KeyboardSafeView/keyboard-safe-view";
 import LoadingOverlay from "../../UI/LoadingOverlay/loading-overlay";
+import InstructionsEdit from "./InstructionsEdit/instructions-edit";
 
 export default class CreateRecipe extends Component {
   _didFocusSubscription;
@@ -34,7 +35,9 @@ export default class CreateRecipe extends Component {
                    selectedEditPhotos: [],
                    isCreatingRecipe: false,
                    currentOpacity: new Animated.Value(0),
-                   showHeaderShadow: false, };
+                   showHeaderShadow: false,
+                   showInstructionsModal: false,
+                   isEditingIngredients: false, };
 
     this.paddingWhenEditing = 5;
     this.windowWidth = Dimensions.get("window").width;
@@ -42,6 +45,7 @@ export default class CreateRecipe extends Component {
     this.defaultShiftX = 0;
     this.transitionShiftX = this.windowWidth;
     this.state.screenShiftX = new Animated.Value(this.transitionShiftX);
+    this.scrollViewContainer = null;
 
     // Custom back behavior on Android
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
@@ -56,14 +60,12 @@ export default class CreateRecipe extends Component {
           {
             toValue: 1,
             duration: 200,
-            useNativeDriver: true,
           }
         ),
         Animated.timing(this.state.screenShiftX,
           {
             toValue: this.defaultShiftX,
             duration: 200,
-            useNativeDriver: true,
           })
       ]).start();
     });
@@ -86,14 +88,12 @@ export default class CreateRecipe extends Component {
         {
           toValue: 0,
           duration: 200,
-          useNativeDriver: true,
         }
       ),
       Animated.timing(this.state.screenShiftX,
         {
           toValue: this.transitionShiftX,
           duration: 200,
-          useNativeDriver: true,
         })
     ]).start();
 
@@ -186,11 +186,25 @@ export default class CreateRecipe extends Component {
       this.setState({ isEditingPhotos: false, photoSize: (this.windowWidth - 3*3 - 40) / 4, });
   }
 
+  instructionsModalCloseHandler = (text) => {
+    let newValue = text.trim();
+    this.setState({ instructions: newValue, showInstructionsModal: false });
+  }
+
+  doneEditingIngredientsHandler = () => {
+    let newState = [];
+    for (let i = 0; i < this.state.ingredients.length; ++i)
+      if (this.state.ingredients[i].ingredient !== "")
+        newState.push(this.state.ingredients[i]);
+
+    this.setState({ isEditingIngredients: false, ingredients: newState });
+  }
+
   createRecipe = () => {
     this.setState({ isCreatingRecipe: true });
 
     let data = { photos: this.state.selectedPhotos,
-                 ingredients: this.state.ingredients,
+                 ingredients: [],
                  instructions: this.state.instructions,
                  recipeTitle: this.state.recipeTitle,
                  tags: this.state.isMealTypeSelected, };
@@ -199,6 +213,10 @@ export default class CreateRecipe extends Component {
       data.recipeTitle = "";
     if (typeof data.instructions !== typeof "string")
       data.instructions = "";
+
+    for (let i = 0; i < this.state.ingredients.length; ++i)
+      if (this.state.ingredients[i].ingredient !== "")
+        data.ingredients.push(this.state.ingredients[i]);
 
     let blobs = {};
     let blobCount = 0;
@@ -213,8 +231,8 @@ export default class CreateRecipe extends Component {
       });
     }
 
-    // if (data.photos.length === 0)
-    //   Auth.createRecipe(data, this.createRecipeSuccessCallback);
+    if (data.photos.length === 0)
+      Auth.createRecipe(data, this.createRecipeSuccessCallback);
   }
 
   createRecipeSuccessCallback = () => {
@@ -223,7 +241,9 @@ export default class CreateRecipe extends Component {
                     ingredients: [],
                     instructions: "",
                     recipeTitle: "",
-                    tag});
+                    isMealTypeSelected: [], });
+
+    this.closeRecipeScreen();
   }
 
   render() {
@@ -238,7 +258,8 @@ export default class CreateRecipe extends Component {
                   quantityChangeHandler={this.quantityChangeHandler}
                   ingredientText={this.state.ingredients[index].ingredient}
                   quantityText={this.state.ingredients[index].quantity}
-                  deleteIcon={IconMinusRound}/>
+                  deleteIcon={IconMinusRound}
+                  editable={this.state.isEditingIngredients}/>
     ));
 
     let photos = this.state.selectedPhotos.map((item, index) => (
@@ -247,26 +268,28 @@ export default class CreateRecipe extends Component {
     ));
 
     return(
-      <KeyboardSafeView style={[styles.container, { opacity: this.state.currentOpacity, }]}
-                        transform={[{translateX: this.state.screenShiftX}]}>
-        <LoadingOverlay isVisible={this.state.isCreatingRecipe}/>
+      <>
+      <View style={[styles.container, { position: "absolute", zIndex: 0, height: "100%" }]}/>
+      <View style={[styles.header, { shadowOpacity: this.state.showHeaderShadow ? 0.3 : 0, elevation: this.state.showHeaderShadow ? 30 : 0 } ]}>
+        <TouchableOpacity style={styles.option} onPress={this.closeRecipeScreen}>
+          <SvgUri svgXmlData={IconChevronLeft} fill="#ff6633" width="20" height="20"/>
+        </TouchableOpacity>
+        <Text style={{ fontSize: DefaultStyles.headerFontSize, fontWeight: "600", color: "black" }}>New Recipe</Text>
+        <TouchableOpacity style={styles.option} onPress={this.createRecipe}>
+          <Text style={{ textAlign: "right", color: "#ff6633", fontWeight: "600" }}>Create</Text>
+        </TouchableOpacity>
+      </View>
 
-        <View style={[styles.header, { shadowOpacity: this.state.showHeaderShadow ? 0.3 : 0, elevation: this.state.showHeaderShadow ? 30 : 0 } ]}>
-          <TouchableOpacity style={styles.option} onPress={this.closeRecipeScreen}>
-            <SvgUri svgXmlData={IconChevronLeft} fill="#ff6633" width="20" height="20"/>
-          </TouchableOpacity>
-          <Text style={{ fontSize: DefaultStyles.headerFontSize, fontWeight: "600", color: "black" }}>New Recipe</Text>
-          <TouchableOpacity style={styles.option} onPress={this.createRecipe}>
-            <Text style={{ textAlign: "right", color: "#ff6633", fontWeight: "600" }}>Create</Text>
-          </TouchableOpacity>
-        </View>
+      <KeyboardSafeView style={[styles.container, { opacity: this.state.currentOpacity, marginLeft: this.state.screenShiftX }]}>
+        <LoadingOverlay isVisible={this.state.isCreatingRecipe} title="Creating Recipe"/>
 
-        <ScrollView style={styles.body}
+        <ScrollView style={[styles.body]}
+                    ref={(scroll) => {this.scrollViewContainer = scroll;}}
                     onScroll={this.handleHeaderShadow} onScrollEndDrag={this.handleHeaderShadow} onMomentumScrollEnd={this.handleHeaderShadow}>
           <View style={styles.topsection}>
             <View style={{ alignItems: "center", borderWidth: this.state.recipeNameOnFocus ? 1 : 0, borderColor: "white", borderBottomColor: "#ff6633" }}>
               <TextInput style={{ textAlign: "center", fontSize: 20 }} placeholder="Recipe name" multiline={false} maxLength={Rules.maxCharRecipeTitle}
-                         onChangeText={(text) => this.setState({ recipeTitle: text })}
+                         onChangeText={(text) => this.setState({ recipeTitle: text })} value={this.state.recipeTitle}
                          onFocus={() => this.setState({ recipeNameOnFocus: true })} onBlur={() => this.setState({ recipeNameOnFocus: false })}/>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "center", flexWrap: "wrap" }}>
@@ -275,32 +298,52 @@ export default class CreateRecipe extends Component {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.subtitle}>
-              Ingredients
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={styles.subtitle}>
+                Ingredients
+              </Text>
+              {!this.state.isEditingIngredients &&
+              <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ isEditingIngredients: true })}>
+                <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Edit</Text>
+              </TouchableOpacity>}
+              {this.state.isEditingIngredients &&
+              <TouchableOpacity style={styles.photoSectionButton} onPress={this.doneEditingIngredientsHandler}>
+                <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Done</Text>
+              </TouchableOpacity>}
+            </View>
             <View style={styles.sectionBody}>
               {ingredients}
             </View>
+            {this.state.isEditingIngredients &&
             <TouchableOpacity style={styles.addmoreButton} onPress={this.addIngredientInput} activeOpacity={1}>
               <SvgUri svgXmlData={IconPlus} width="15" height="15" fill="#ff6633" />
               <Text style={{ color: "#ffa64d", fontWeight: "600", marginLeft: 5 }}>add ingredient</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
           </View>
 
+          <Modal animationType="slide" visible={this.state.showInstructionsModal}>
+            <InstructionsEdit closeHandler={this.instructionsModalCloseHandler} text={this.state.instructions}/>
+          </Modal>
           <View style={styles.section}>
-            <Text style={styles.subtitle}>
-              Instructions
-            </Text>
-            <View style={styles.sectionBody}>
+            <View style={{ flexDirection: "row", alignItems: "center", }}>
+              <Text style={styles.subtitle}>
+                Instructions
+              </Text>
+              <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ showInstructionsModal: true })}>
+                <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Edit</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={[styles.sectionBody, { paddingBottom: this.state.instructionsInputSelected ? 10 : 0 }]}>
               <TextInput multiline={true} placeholder="Add instructions" onChangeText={(text) => this.setState({ instructions: text })}
-                         maxLength={Rules.maxCharInstructions}/>
+                         editable={false}
+                         maxLength={Rules.maxCharInstructions} value={this.state.instructions}/>
             </View>
           </View>
 
           <Modal animationType="slide" visible={this.state.showImagePicker}>
             <ImagePicker handleClose={this.closeImagePicker} onSubmit={this.onSubmitImagePicker} existsCount={this.state.selectedEditPhotos.length}/>
           </Modal>
-          <View style={styles.section}>
+          <View style={[styles.section, { marginBottom: 20 }]}>
             <View style={styles.sectionHeader}>
               <View style={{ flexDirection: "row", alignItems: "center", }}>
                 <Text style={styles.subtitle}>
@@ -319,16 +362,17 @@ export default class CreateRecipe extends Component {
                   <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Remove selected</Text>
                 </TouchableOpacity>}
                 {this.state.isEditingPhotos && this.state.selectedEditPhotos.length === 0 &&
-                <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ selectedPhotos: [] })} >
+                <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ selectedPhotos: [], isEditingPhotos: false })} >
                   <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Clear</Text>
                 </TouchableOpacity>}
               </View>
               <View>
-                <TouchableOpacity onPress={this.openImagePicker} style={{ flexDirection: "row", alignItems: "center", }}
+                {!this.state.isEditingPhotos &&
+                <TouchableOpacity onPress={this.openImagePicker} style={{ flexDirection: "row", alignItems: "center", height: 25 }}
                                   activeOpacity={1}>
                   <SvgUri svgXmlData={IconPlus} width="15" height="15" fill="#ff6633" />
                   <SvgUri svgXmlData={IconCamera} width="20" height="20" fill="#ff6633" style={{ marginLeft: 3 }}/>
-                </TouchableOpacity>
+                </TouchableOpacity>}
               </View>
             </View>
             <View style={[styles.sectionBody, { flexDirection: "row", flexWrap: "wrap",
@@ -341,6 +385,7 @@ export default class CreateRecipe extends Component {
         </ScrollView>
 
       </KeyboardSafeView>
+      </>
     );
   }
 
@@ -358,16 +403,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#e8e8e8",
     width: "100%",
-    marginTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
   },
   header: {
     // flex: 1,
+    position: "absolute",
+    zIndex: 2,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "white",
     width: "100%",
-    height: 60,
+    height: DefaultStyles.headerHeight,
+    paddingTop: DefaultStyles.headerPaddingTop,
     paddingRight: 20,
     paddingLeft: 20,
     shadowColor: "black",
@@ -380,7 +427,9 @@ const styles = StyleSheet.create({
     // flex: 11,
   },
   option: {
+    justifyContent: "center",
     width: 50,
+    height: 50,
   },
   section: {
     backgroundColor: "white",
@@ -395,12 +444,13 @@ const styles = StyleSheet.create({
   addmoreButton: {
     flexDirection: "row",
     alignItems: "center",
+    height: 30,
     marginTop: 10,
   },
   topsection: {
     backgroundColor: "white",
     padding: 20,
-    paddingTop: 0,
+    paddingTop: DefaultStyles.headerHeight,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },

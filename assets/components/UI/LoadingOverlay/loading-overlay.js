@@ -18,7 +18,7 @@ export default class LoadingOverlay extends Component {
                borderRadius={5}>
         <View style={styles.container}>
           <ActivityIndicator size="large" color="#ffa64d" animating={true} style={{ marginTop: 30, marginBottom: 30 }}/>
-          <Text style={{ fontSize: 20 }}>Creating Recipe</Text>
+          <Text style={{ fontSize: 20 }}>{this.props.title}</Text>
         </View>
       </Overlay>
     );

@@ -11,6 +11,7 @@ export default class KeyboardSafeView extends Component {
   componentDidMount() {
     this.keyboardDidShowSubscription = Keyboard.addListener("keyboardDidShow", this.keyboardDidShowHandler);
     this.keyboardDidHideSubscription = Keyboard.addListener("keyboardDidHide", this.keyboardDidHideHandler);
+    this.screenShiftSubscription = this.state.screenShift.addListener(({value}) => this._value = value);
   }
 
   componentWillUnmount() {
@@ -21,6 +22,7 @@ export default class KeyboardSafeView extends Component {
   keyboardDidShowHandler = (event) => {
     let windowHeight = Dimensions.get("window").height;
     let keyboardHeight = event.endCoordinates.height;
+    this.keyboardHeight = keyboardHeight;
     let currentlyFocusedField = TextInput.State.currentlyFocusedField();
     UIManager.measure(currentlyFocusedField,  (originX, originY, width, height, pageX, pageY) => {
       const fieldHeight = height;
@@ -34,7 +36,6 @@ export default class KeyboardSafeView extends Component {
         {
           toValue: gap-10,
           duration: 200,
-          useNativeDriver: true,
         }
       ).start();
     });
@@ -46,17 +47,13 @@ export default class KeyboardSafeView extends Component {
       {
         toValue: 0,
         duration: 200,
-        useNativeDriver: true,
       }
     ).start();
   }
 
   render() {
-    if (this.props.transform === undefined)
-      this.props.transform = [];
-      
     return(
-      <Animated.View style={this.props.style.concat([{ transform: [{translateY: this.state.screenShift}].concat(this.props.transform) }, ])}>
+      <Animated.View style={this.props.style.concat([{ transform: [{translateY: this.state.screenShift}] }, ])}>
         {this.props.children}
       </Animated.View>
     );

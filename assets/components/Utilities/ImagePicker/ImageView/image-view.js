@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, Image, Alert,
          TouchableOpacity } from "react-native";
 
+import { DefaultStyles } from "../../../Const/const";
+
 export default class ImageView extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +22,6 @@ export default class ImageView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    borderColor: "#3091e6",
+    borderColor: DefaultStyles.standardBlue,
   }
 })

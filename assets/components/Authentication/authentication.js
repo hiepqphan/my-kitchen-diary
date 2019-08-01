@@ -1,4 +1,5 @@
 import * as Facebook from "expo-facebook";
+import uuid from "uuid";
 
 import { config } from "../AppConfig/config";
 import Firebase from "../Firebase";
@@ -34,6 +35,10 @@ export default class Auth {
   }
 
   static createRecipe(data, successCallback) {
+    let today = new Date();
+    data.dateCreated = Firebase.firestore.Timestamp.fromDate(today);
+    data.dateCreatedReversed = -today.getTime();
+
     Firebase.app().firestore().collection(`${Auth.getCurrentUser().uid}`).doc("recipes").collection("recipes").add({})
     .then(docRef => {
       Auth.createRecipeInStorage(data, docRef.id, successCallback);
@@ -46,18 +51,15 @@ export default class Auth {
   static async createRecipeInStorage(data, recipeId, successCallback) {
     let downloadURLs = {};
     let uploadTasks = {};
+    let uploadTimeout = {};
     let urlsCount = 0;
 
     for (let i = 0; i < data.photos.length; ++i) {
-      let randomPrefix = Math.floor(Math.random()*(100+1)+1).toString();
-      let fileExt = data.photos[i].node.image.uri.split('.').pop();
-      let fileName = randomPrefix + data.photos[i].node.image.uri.replace(new RegExp('/', 'g'), '');
-      fileName = fileName.replace(new RegExp(':', 'g'), '') + '.' + fileExt;
-
+      let fileName = uuid.v4();
       uploadTasks[i] = Auth.uploadFile(data.blobs[i], fileName, recipeId, "recipes");
     }
 
-    for (i in uploadTasks) {
+    for (let i in uploadTasks) {
       uploadTasks[i].on(Firebase.storage.TaskEvent.STATE_CHANGED,
         (snapshot) => {
 
@@ -68,15 +70,19 @@ export default class Auth {
         () => {
           // Callback when finished uploading
           if (uploadTasks[i].snapshot.state === Firebase.storage.TaskState.SUCCESS) {
-            uploadTasks[i].snapshot.ref.getDownloadURL().then(url => {
+            uploadTasks[i].snapshot.ref.getDownloadURL()
+            .then(url => {
               downloadURLs[i] = url;
               ++urlsCount;
               if (urlsCount === data.photos.length) {
                 for (let j = 0; j < data.photos.length; ++j)
                   data.photos[j].node.image.uri = downloadURLs[j];
-                data.blobs = undefined;
+                delete data.blobs;
                 Auth.createRecipeInDatabase(data, recipeId, successCallback);
               }
+            })
+            .catch(error => {
+              console.log("Couldn't get download url", error);
             });
           }
         });

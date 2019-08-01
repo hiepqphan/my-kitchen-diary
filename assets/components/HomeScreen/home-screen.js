@@ -15,6 +15,25 @@ export default class HomeScreen extends Component {
     this.props.navigation.navigate("CreateRecipe");
   }
 
+  getOneRecipePage = () => {
+//     var first = db.collection("cities")
+//         .orderBy("population")
+//         .limit(25);
+//
+// return first.get().then(function (documentSnapshots) {
+//   // Get the last visible document
+//   var lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
+//   console.log("last", lastVisible);
+//
+//   // Construct a new query starting at this document,
+//   // get the next 25 cities.
+//   var next = db.collection("cities")
+//           .orderBy("population")
+//           .startAfter(lastVisible)
+//           .limit(25);
+// });
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -41,11 +60,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     width: "100%",
-    marginTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
   },
   header: {
-    width: "100%",
-    height: 60,
+    
   },
   recipesContainer: {
     flex: 1

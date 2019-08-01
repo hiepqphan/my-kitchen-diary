@@ -15,17 +15,20 @@ export default class Ingredient extends Component {
         <View style={styles.inputsContainer}>
           <View style={[styles.input, styles.ingredientName]}>
             <TextInput multiline={false} placeholder="ingredient" value={this.props.ingredientText} maxLength={Rules.maxCharPerIngredient}
-                       onChange={(event) => this.props.ingredientChangeHandler(event, this.props.index)}/>
+                       onChange={(event) => this.props.ingredientChangeHandler(event, this.props.index)}
+                       editable={this.props.editable}/>
           </View>
           <View style={[styles.input, styles.quantity]}>
             <TextInput multiline={false} placeholder="quantity" value={this.props.quantityText} maxLength={Rules.maxCharPerIngredient}
-                       onChange={(event) => this.props.quantityChangeHandler(event, this.props.index)}/>
+                       onChange={(event) => this.props.quantityChangeHandler(event, this.props.index)}
+                       editable={this.props.editable}/>
           </View>
         </View>
+        {this.props.editable &&
         <TouchableOpacity style={styles.deleteButton} onPress={() => this.props.removeHandler(this.props.index)}
                           activeOpacity={1}>
           <SvgUri svgXmlData={this.props.deleteIcon} width="20" height="20" fill="#ff6633" />
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
     );
   }
@@ -38,15 +41,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputsContainer: {
+    flex: 9,
     flexDirection: "row",
     alignItems: "center",
-    width: "85%",
   },
   deleteButton: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    width: 20,
-    height: 20,
+    width: 40,
+    height: 40,
   },
   input: {
     borderBottomColor: "#e8e8e8",
