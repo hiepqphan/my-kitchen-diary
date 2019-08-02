@@ -1,14 +1,29 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, FlatList, Modal,
-         Platform, StatusBar, ScrollView } from "react-native";
+         Platform, StatusBar, ScrollView, PanResponder,
+         Animated} from "react-native";
 
 import Firebase, { FirebaseContext } from "../Firebase";
 import Header from "./Header/header";
+import { DefaultStyles } from "../Const/const";
+import RecipeItem from "./RecipeItem/recipe-item";
+import Auth from "../Authentication/authentication";
+import RecipeView from "./RecipeView/recipe-view";
 
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {  };
+    this.state = { lastRecipe: null,
+                   recipes: [],
+                   hasMoreRecipes: true,
+                   hasResponder: { index: null, released: true },
+                   currentRecipeData: null,
+                   currentRecipeId: null,
+                   showRecipeModal: false, };
+  }
+
+  componentDidMount() {
+    this.getOneRecipePage();
   }
 
   openCreateRecipe = () => {
@@ -16,31 +31,48 @@ export default class HomeScreen extends Component {
   }
 
   getOneRecipePage = () => {
-//     var first = db.collection("cities")
-//         .orderBy("population")
-//         .limit(25);
-//
-// return first.get().then(function (documentSnapshots) {
-//   // Get the last visible document
-//   var lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
-//   console.log("last", lastVisible);
-//
-//   // Construct a new query starting at this document,
-//   // get the next 25 cities.
-//   var next = db.collection("cities")
-//           .orderBy("population")
-//           .startAfter(lastVisible)
-//           .limit(25);
-// });
+    if (this.state.hasMoreRecipes) {
+      let limit = 20;
+      Auth.getRecipes(this.state.lastRecipe, limit).then(result => {
+        this.setState({ lastRecipe: result[result.length-1],
+                        recipes: this.state.recipes.concat(result) });
+
+        if (result.length < limit)
+          this.setState({ hasMoreRecipes: false });
+      });
+    }
+  }
+
+  rerenderItemHandler = (index, released) => {
+    this.setState({ hasResponder: { index: index, released: released } });
+  }
+
+  showRecipe = (index) => {
+    this.setState({ currentRecipeData: this.state.recipes[index].data(),
+                    currentRecipeId: this.state.recipes[index].id,
+                    showRecipeModal: true, });
+  }
+
+  closeRecipeModal = () => {
+    this.setState({ showRecipeModal: false, })
   }
 
   render() {
     return (
       <View style={styles.container}>
+        <Modal visible={this.state.showRecipeModal}>
+          <RecipeView data={this.state.currentRecipeData} recipeId={this.state.currentRecipeId}
+                      handleClose={this.closeRecipeModal} />
+        </Modal>
         <Header title="Recipes" styleList={[styles.header]} createRecipeHandler={this.openCreateRecipe}/>
-
         <View style={styles.recipesContainer}>
-          <FlatList/>
+          <FlatList data={this.state.recipes}
+                    extraData={this.state.hasResponder}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={ ({item, index}) => <RecipeItem index={index} data={item.data()} rerender={this.rerenderItemHandler}
+                                                                hasResponder={this.state.hasResponder.index === index}
+                                                                showRecipe={this.showRecipe} /> }
+                    onEndReached={this.getOneRecipePage}/>
         </View>
 
         <View style={{ height: 60, width: "100%", backgroundColor: "orange" }}>
@@ -60,11 +92,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     width: "100%",
+    paddingTop: DefaultStyles.headerHeight,
   },
   header: {
-    
+
   },
   recipesContainer: {
-    flex: 1
+    flex: 1,
+    width: "100%",
   }
 });

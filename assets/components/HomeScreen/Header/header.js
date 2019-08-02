@@ -21,6 +21,8 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    position: "absolute",
+    zIndex: 2,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -30,6 +32,8 @@ const styles = StyleSheet.create({
     paddingTop: DefaultStyles.headerPaddingTop,
     paddingRight: 20,
     paddingLeft: 20,
+    borderBottomWidth: 0.5,
+    borderBottomColor: DefaultStyles.standardBlack,
   },
   title: {
     fontSize: DefaultStyles.headerFontSize,

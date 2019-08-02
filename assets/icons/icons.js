@@ -5,6 +5,8 @@ let Icons = {
 
   chevronLeft: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62.53 103.36"><defs><style>.cls-1{fill-rule:evenodd;}</style></defs><title>chevron_left</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path fill="#ddd" class="cls-1" d="M60,3.53a10.38,10.38,0,0,0-14.63-1,10.87,10.87,0,0,0-1,1L3,44.82A10.34,10.34,0,0,0,3,59.45v0l41.31,41.32A10.37,10.37,0,0,0,59,86.16l-34-34,34-34A10.38,10.38,0,0,0,60,3.53Z"/></g></g></svg>`,
 
+  chevronRight: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62.53 103.36"><defs><style>.cls-1{fill-rule:evenodd;}</style></defs><title>chevron_right</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path fill="#ddd" class="cls-1" d="M2.57,3.53a10.38,10.38,0,0,1,14.63-1,10.87,10.87,0,0,1,1,1L59.5,44.82a10.34,10.34,0,0,1,0,14.63v0L18.19,100.79A10.37,10.37,0,0,1,3.56,86.16l34-34-34-34A10.38,10.38,0,0,1,2.57,3.53Z"/></g></g></svg>`,
+
   trashBin: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 86.28 132.67"><defs><style>.cls-1{fill-rule:evenodd;}</style></defs><title>trash</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path fill="#ddd" class="cls-1" d="M33.68,4H7.91A7.91,7.91,0,0,0,0,11.93H86.28A7.91,7.91,0,0,0,78.37,4H52.6a8,8,0,0,0-6.91-4H40.6A8,8,0,0,0,33.68,4Z"/><path fill="#ddd" class="cls-1" d="M81.22,122.27,86,22.69a5.49,5.49,0,0,0-5.48-5.75H5.75A5.48,5.48,0,0,0,.28,22.69l4.78,99.58A10.92,10.92,0,0,0,16,132.67H70.31A10.92,10.92,0,0,0,81.22,122.27ZM24.77,112.4a3.15,3.15,0,0,1-6.29,0V33.62a3.15,3.15,0,1,1,6.29,0Zm21.52,0a3.15,3.15,0,0,1-6.29,0V33.62a3.15,3.15,0,1,1,6.29,0Zm21.51,0a3.15,3.15,0,0,1-6.29,0V33.62a3.15,3.15,0,1,1,6.29,0Z"/></g></g></svg>`,
 
   minus: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 138.21 31.08"><title>minus</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect fill="#ddd" width="138.21" height="31.08" rx="15.54"/></g></g></svg>`,
@@ -15,6 +17,7 @@ let Icons = {
 export const IconPlus = Icons.plus;
 export const IconCamera = Icons.camera;
 export const IconChevronLeft = Icons.chevronLeft;
+export const IconChevronRight = Icons.chevronRight;
 export const IconTrashBin = Icons.trashBin;
 export const IconMinus = Icons.minus;
 export const IconMinusRound = Icons.minusRound;

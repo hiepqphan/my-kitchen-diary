@@ -19,7 +19,8 @@ export default class Ingredient extends Component {
                        editable={this.props.editable}/>
           </View>
           <View style={[styles.input, styles.quantity]}>
-            <TextInput multiline={false} placeholder="quantity" value={this.props.quantityText} maxLength={Rules.maxCharPerIngredient}
+            <TextInput multiline={false} placeholder={this.props.quantityPlaceholder !== undefined ? this.props.quantityPlaceholder : "quantity"}
+                       value={this.props.quantityText} maxLength={Rules.maxCharPerIngredient}
                        onChange={(event) => this.props.quantityChangeHandler(event, this.props.index)}
                        editable={this.props.editable}/>
           </View>

@@ -10,6 +10,8 @@ const Data = {
     headerStandardColor: "#e8e8e8",
     standardBlue: "rgb(0, 122, 255)",
     standardBlack: "#ddd",
+    standardLightGray: "#f5f5f5",
+    listItemHeight: 100,
   },
   rules: {
     maxPhotosPerRecipe: 20,

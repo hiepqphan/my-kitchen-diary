@@ -27,6 +27,9 @@ const AppNavigator = createStackNavigator({
 {
   initialRouteName: "Loading",
   headerMode: "none",
+  defaultNavigationOptions: {
+    gesturesEnabled: false,
+  }
 });
 
 const AppContainer = createAppContainer(AppNavigator);

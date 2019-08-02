@@ -105,4 +105,23 @@ export default class Auth {
       console.log("Creating recipe error while writing to database", error);
     });
   }
+
+  static getRecipes(after = null, limit = 20) {
+    let query = Firebase.app().firestore().collection(`${Auth.getCurrentUser().uid}`).doc("recipes").collection("recipes")
+                .orderBy("dateCreatedReversed");
+    if (after !== null)
+      query = query.startAfter(after);
+
+    query = query.limit(limit);
+
+    return (
+      query.get().then(documentSnapshots => {
+        return documentSnapshots.docs;
+      })
+      .catch(error => {
+        console.log("error querying",error);
+      })
+    );
+  }
+
 }
