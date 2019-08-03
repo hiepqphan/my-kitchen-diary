@@ -38,10 +38,6 @@ export default class ImagePicker extends Component {
 
       CameraRoll.getPhotos(params).then(result => {
         let currentLength = this.state.photos.length;
-        let newPhotos = result.edges.map((item, index) => {
-          item["key"] = index + currentLength;
-          return item;
-        });
 
         let duplicated = false;
         if (this.state.photos.length > 0)
@@ -101,6 +97,7 @@ export default class ImagePicker extends Component {
           <FlatList horizontal={false} numColumns={4}
                     data={this.state.photos}
                     extraData={this.state.selected}
+                    keyExtractor={(item, index) => index.toString()}
                     renderItem={ ({item, index}) => <ImageView index={index} uri={item.node.image.uri} size={this.photoSize} style={[styles.photo, { marginTop: index < 4 ? 0 : 3 }]}
                                                                selectToggler={this.selectPhotoHandler} selected={this.state.selected.includes(index)}/> }
                     onEndReached={this.state.readyToGetPhotos && this.loadPhotos}/>

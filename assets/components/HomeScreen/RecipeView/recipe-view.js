@@ -1,17 +1,20 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, FlatList, Modal,
-         Platform, StatusBar, ScrollView, TouchableOpacity, } from "react-native";
+         Platform, StatusBar, ScrollView, TouchableOpacity,
+         Dimensions, } from "react-native";
 import SvgUri from "react-native-svg-uri";
 
 import { DefaultStyles } from "../../Const/const";
 import { IconChevronLeft } from "../../../icons/icons";
 import Auth from "../../Authentication/authentication";
 import IngredientItem from "../CreateRecipe/IngredientItem/ingredient-item";
+import ImageView from "../../Utilities/ImagePicker/ImageView/image-view";
 
 export default class RecipeView extends Component {
   constructor(props) {
     super(props);
-    this.state = { instructions: this.props.data.instructions };
+    this.state = { instructions: this.props.data.instructions,
+                   photoSize: (Dimensions.get("window").width-10-40-9)/4 };
   }
 
   render() {
@@ -21,6 +24,11 @@ export default class RecipeView extends Component {
                       quantityText={item.quantity} style={{ marginTop: index !== 0 ? 3 : 0 }}
                       quantityPlaceholder=""
                       key={index}/>
+    ));
+
+    let photos = this.props.data.photos.map((item, index) => (
+      <ImageView key={index} index={index} uri={item.node.image.uri} size={this.state.photoSize}
+                 style={{ marginRight: index % 4 !== 3 ? 3 : 0, }}/>
     ));
 
     return (
@@ -59,6 +67,19 @@ export default class RecipeView extends Component {
             </View>
             <View style={styles.subbody}>
               <Text>{this.state.instructions}</Text>
+            </View>
+          </View>
+
+          <View style={[styles.section, { marginBottom: 20 }]}>
+            <View style={styles.subheader}>
+              <View style={{ flexDirection: "row", alignItems: "center", }}>
+                <Text style={styles.subtitle}>
+                  Images
+                </Text>
+              </View>
+            </View>
+            <View style={[styles.subbody, { flexDirection: "row", flexWrap: "wrap", }]}>
+              {photos}
             </View>
           </View>
 

@@ -60,7 +60,7 @@ export default class HomeScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Modal visible={this.state.showRecipeModal}>
+        <Modal visible={this.state.showRecipeModal} animationType="slide">
           <RecipeView data={this.state.currentRecipeData} recipeId={this.state.currentRecipeId}
                       handleClose={this.closeRecipeModal} />
         </Modal>

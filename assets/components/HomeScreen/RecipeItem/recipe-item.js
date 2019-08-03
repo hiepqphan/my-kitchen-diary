@@ -12,7 +12,8 @@ export default class RecipeItem extends Component {
     super(props);
     this.state = { canGetResponderGrant: false,
                    deleteButtonWidth: new Animated.Value(0),
-                   animating: false, };
+                   animating: false,
+                   swiped: false,  };
 
     this.panResponderSetup = PanResponder.create({
       onStartShouldSetPanResponder: (event) => false,
@@ -20,20 +21,11 @@ export default class RecipeItem extends Component {
       onPanResponderGrant: this.responderGrandHandler,
       onPanResponderMove: this.responderMoveHandler,
       onPanResponderRelease: this.responderReleaseHandler,
+      onPanResponderTerminate: () => console.log("terminate"),
     });
 
     this.initWidth = Dimensions.get("window").width;
 
-
-    this.deleteButtonSubscription = this.state.deleteButtonWidth.addListener(({value}) => this._value = value);
-  }
-
-  componentWillUpdate() {
-    if (!this.props.hasResponder)
-      Animated.timing(this.state.deleteButtonWidth, {
-        toValue: 0,
-        duration: 500,
-      }).start();
   }
 
   lengthOfVector(v) {
@@ -52,7 +44,7 @@ export default class RecipeItem extends Component {
   shouldSetResponderHandler = (event, gestureState) => {
     // Origin is the touch's starting position. Ox goes right, Oy goes down.
     console.log("trying to grant");
-    let angle = this.getSwipeAngle(gestureState); //Convert radian to degree
+    let angle = this.getSwipeAngle(gestureState);
 
     if ((180-angle) <= 10) {
       this.setState({ swipingDir: "left" });
@@ -66,7 +58,6 @@ export default class RecipeItem extends Component {
   }
 
   responderGrandHandler = (event, gestureState) => {
-    this.props.rerender(this.props.index, false);
     console.log(this.props.index);
   }
 
@@ -74,37 +65,48 @@ export default class RecipeItem extends Component {
     let current = this.state.deleteButtonWidth;
     let moved = current < this.initWidth/2 ? Math.abs(gestureState.x0-gestureState.moveX) / 10 : 0;
 
-    // Force parent FlatList to rerender this component
-    this.props.rerender(this.props.index, false);
-
-    if (!this.state.animating)
-      if (this.state.swipingDir === "left" && this.state.deleteButtonWidth._value === 0) {
-        this.setState({ animating: true, targetLeft: 0 });
-        Animated.timing(this.state.deleteButtonWidth,{
+    if (!this.state.animating) {
+      this.setState({ animating: true });
+      if (this.state.swipingDir === "left")
+        Animated.spring(this.state.deleteButtonWidth, {
           toValue: -DefaultStyles.listItemHeight,
-          duration: 700,
-        }).start(() => this.setState({ animating: false, }));
-      }
-      else if (this.state.swipingDir === "right" && this.state.deleteButtonWidth._value === -DefaultStyles.listItemHeight){
-        this.setState({ animating: true });
-        Animated.timing(this.state.deleteButtonWidth,{
+          speed: 10,
+          useNativeDriver: true,
+        }).start(() => this.setState({ animating: false, swiped: true }));
+      else
+        Animated.timing(this.state.deleteButtonWidth, {
           toValue: 0,
-          duration: 700,
-        }).start(() => this.setState({ animating: false, targetLeft: -DefaultStyles.listItemHeight }));
-      }
+          duration: 500,
+          useNativeDriver: true,
+        }).start(() => this.setState({ animating: false, swiped: false }));
+    }
+
+  }
+
+  slideItem = () => {
+    if (this.state.swiped) {
+      this.setState({ swiped: false });
+      Animated.timing(this.state.deleteButtonWidth, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
   }
 
   responderReleaseHandler = (event, gestureState) => {
-    // Force parent FlatList to rerender this component
-    this.props.rerender(this.props.index, true);
     console.log('release');
+
+    this.setState({ animating: false });
+
+    setTimeout(this.slideItem, 5000);
   }
 
   render() {
     return (
       <View style={{ position: "relative", top: 0, left: 0, flexDirection: "row" }} {...this.panResponderSetup.panHandlers}>
 
-        <Animated.View style={[styles.container, { left: this.state.deleteButtonWidth }]}>
+        <Animated.View style={[styles.container, { transform: [{translateX: this.state.deleteButtonWidth}] }]}>
           <TouchableOpacity style={styles.container} onPress={() => this.props.showRecipe(this.props.index)}
                             activeOpacity={1}>
           <View style={styles.thumbnailContainer}>
