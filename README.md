@@ -14,15 +14,17 @@
 </p>
 
 ## Contents
-- [Description](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#description)
-- [Installation](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#installation)
-- [Developed features](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#developed-features)
-  - [Authentication](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#authentication)
-  - [Create a recipe](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#create-a-recipe)
-  - [View recipes list](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#view-recipes-list)
-- [Features in development](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#features-in-development)
-  - [Edit recipe](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#edit-recipe)
-  - [Follow a recipe](https://github.com/hiepqphan/my-kitchen-diary/new/master?readme=1#follow-a-recipe)
+- [Description](https://github.com/hiepqphan/my-kitchen-diary#description)
+- [Installation](https://github.com/hiepqphan/my-kitchen-diary#installation)
+- [Developed features](https://github.com/hiepqphan/my-kitchen-diary#developed-features)
+  - [Authentication](https://github.com/hiepqphan/my-kitchen-diary#authentication)
+  - [Create a recipe](https://github.com/hiepqphan/my-kitchen-diary#create-a-recipe)
+  - [View recipes list](https://github.com/hiepqphan/my-kitchen-diary#view-recipes-list)
+- [Features in development](https://github.com/hiepqphan/my-kitchen-diary#features-in-development)
+  - [Edit recipe](https://github.com/hiepqphan/my-kitchen-diary#edit-recipe)
+  - [Follow a recipe](https://github.com/hiepqphan/my-kitchen-diary#follow-a-recipe)
+- [Credits](https://github.com/hiepqphan/my-kitchen-diary#credits)
+- [License](https://github.com/hiepqphan/my-kitchen-diary#license)
 
 ## Description
 **My kitchen diary** is built using <a href="https://github.com/facebook/react-native" target="_blank" rel="noopener noreferrer">React Native</a>
