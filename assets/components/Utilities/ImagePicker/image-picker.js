@@ -37,7 +37,7 @@ export default class ImagePicker extends Component {
         params["after"] = this.state.end_cursor;
 
       CameraRoll.getPhotos(params).then(result => {
-        let currentLength = this.state.photos.length;
+        let newPhotos = result.edges;
 
         let duplicated = false;
         if (this.state.photos.length > 0)
@@ -120,8 +120,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: DefaultStyles.headerHeight,
     paddingTop: DefaultStyles.headerPaddingTop,
-    paddingRight: 20,
-    paddingLeft: 20,
+    paddingRight: DefaultStyles.standardPadding,
+    paddingLeft: DefaultStyles.standardPadding,
     borderBottomWidth: 0.5,
     borderBottomColor: DefaultStyles.standardBlack,
   },

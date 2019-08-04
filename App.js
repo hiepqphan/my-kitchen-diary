@@ -8,8 +8,17 @@ import LoginScreen from "./assets/components/LoginScreen/login-screen";
 import HomeScreen from "./assets/components/HomeScreen/home-screen";
 import CreateRecipeScreen from "./assets/components/HomeScreen/CreateRecipe/create-recipe";
 
-const HomeScreenNavigator = createBottomTabNavigator({
+const HomeScreenNavigator = createStackNavigator({
   Home: HomeScreen,
+  CreateRecipe: CreateRecipeScreen,
+},
+{
+  initialRouteName: "Home",
+  headerMode: "none",
+});
+
+const MainTabNavigator = createBottomTabNavigator({
+  Home: HomeScreenNavigator,
   CreateRecipe: CreateRecipeScreen,
 },
 {
@@ -22,7 +31,7 @@ const HomeScreenNavigator = createBottomTabNavigator({
 const AppNavigator = createStackNavigator({
   Loading: LoadingScreen,
   Login: LoginScreen,
-  Home: HomeScreenNavigator,
+  Home: MainTabNavigator,
 },
 {
   initialRouteName: "Loading",

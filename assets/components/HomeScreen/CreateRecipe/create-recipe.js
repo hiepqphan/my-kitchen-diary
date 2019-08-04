@@ -34,7 +34,6 @@ export default class CreateRecipe extends Component {
                    isEditingPhotos: false,
                    selectedEditPhotos: [],
                    isCreatingRecipe: false,
-                   currentOpacity: new Animated.Value(0),
                    showHeaderShadow: false,
                    showInstructionsModal: false,
                    isEditingIngredients: false, };
@@ -42,10 +41,6 @@ export default class CreateRecipe extends Component {
     this.paddingWhenEditing = 5;
     this.windowWidth = Dimensions.get("window").width;
     this.state.photoSize = (this.windowWidth - 3*3 - 40) / 4;
-    this.defaultShiftX = 0;
-    this.transitionShiftX = this.windowWidth;
-    this.state.screenShiftX = new Animated.Value(this.transitionShiftX);
-    this.scrollViewContainer = null;
 
     // Custom back behavior on Android
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
@@ -54,21 +49,6 @@ export default class CreateRecipe extends Component {
   }
 
   componentDidMount() {
-    this.onFocusListener = this.props.navigation.addListener("didFocus", () => {
-      Animated.parallel([
-        Animated.timing(this.state.currentOpacity,
-          {
-            toValue: 1,
-            duration: 200,
-          }
-        ),
-        Animated.timing(this.state.screenShiftX,
-          {
-            toValue: this.defaultShiftX,
-            duration: 200,
-          })
-      ]).start();
-    });
 
     // Custom back behavior on Android
     this._willBlurSubscription = this.props.navigation.addListener("willBlur", payload =>
@@ -77,27 +57,13 @@ export default class CreateRecipe extends Component {
   }
 
   componentWillUnmount() {
-    this.onFocusListener.remove();
+    // this.onFocusListener.remove();
     this._didFocusSubscription && this._didFocusSubscription.remove();
     this._willBlurSubscription && this._willBlurSubscription.remove();
   }
 
   closeRecipeScreen = () => {
-    Animated.parallel([
-      Animated.timing(this.state.currentOpacity,
-        {
-          toValue: 0,
-          duration: 200,
-        }
-      ),
-      Animated.timing(this.state.screenShiftX,
-        {
-          toValue: this.transitionShiftX,
-          duration: 200,
-        })
-    ]).start();
-
-    setTimeout(() => this.props.navigation.navigate("Home"), 200);
+    this.props.navigation.navigate("Home");
   }
 
   mealTypeHandler = (item) => {
@@ -236,12 +202,12 @@ export default class CreateRecipe extends Component {
   }
 
   createRecipeSuccessCallback = () => {
-    this.setState({ isCreatingRecipe: false,
-                    selectedPhotos: [],
-                    ingredients: [],
-                    instructions: "",
-                    recipeTitle: "",
-                    isMealTypeSelected: [], });
+    // this.setState({ isCreatingRecipe: false,
+    //                 selectedPhotos: [],
+    //                 ingredients: [],
+    //                 instructions: "",
+    //                 recipeTitle: "",
+    //                 isMealTypeSelected: [], });
 
     this.closeRecipeScreen();
   }
@@ -270,7 +236,7 @@ export default class CreateRecipe extends Component {
     return(
       <>
       <View style={[styles.container, { position: "absolute", zIndex: 0, height: "100%" }]}/>
-      <View style={[styles.header, { shadowOpacity: this.state.showHeaderShadow ? 0.3 : 0, elevation: this.state.showHeaderShadow ? 30 : 0 } ]}>
+      <View style={[styles.header, { borderBottomWidth: this.state.showHeaderShadow ? 0.5 : 0 } ]}>
         <TouchableOpacity style={styles.option} onPress={this.closeRecipeScreen}>
           <SvgUri svgXmlData={IconChevronLeft} fill="#ff6633" width="20" height="20"/>
         </TouchableOpacity>
@@ -280,13 +246,12 @@ export default class CreateRecipe extends Component {
         </TouchableOpacity>
       </View>
 
-      <KeyboardSafeView style={[styles.container, { opacity: this.state.currentOpacity, marginLeft: this.state.screenShiftX }]}>
+      <KeyboardSafeView style={[styles.container]}>
         <LoadingOverlay isVisible={this.state.isCreatingRecipe} title="Creating Recipe"/>
 
         <ScrollView style={[styles.body]}
-                    ref={(scroll) => {this.scrollViewContainer = scroll;}}
                     onScroll={this.handleHeaderShadow} onScrollEndDrag={this.handleHeaderShadow} onMomentumScrollEnd={this.handleHeaderShadow}>
-          <View style={styles.topsection}>
+          <View style={[styles.section, styles.topsection]} elevation={1}>
             <View style={{ alignItems: "center", borderWidth: this.state.recipeNameOnFocus ? 1 : 0, borderColor: "white", borderBottomColor: "#ff6633" }}>
               <TextInput style={{ textAlign: "center", fontSize: 20 }} placeholder="Recipe name" multiline={false} maxLength={Rules.maxCharRecipeTitle}
                          onChangeText={(text) => this.setState({ recipeTitle: text })} value={this.state.recipeTitle}
@@ -297,7 +262,7 @@ export default class CreateRecipe extends Component {
             </View>
           </View>
 
-          <View style={styles.section}>
+          <View style={styles.section} elevation={1}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={styles.subtitle}>
                 Ingredients
@@ -324,7 +289,7 @@ export default class CreateRecipe extends Component {
           <Modal animationType="slide" visible={this.state.showInstructionsModal}>
             <InstructionsEdit closeHandler={this.instructionsModalCloseHandler} text={this.state.instructions}/>
           </Modal>
-          <View style={styles.section}>
+          <View style={styles.section} elevation={1}>
             <View style={{ flexDirection: "row", alignItems: "center", }}>
               <Text style={styles.subtitle}>
                 Instructions
@@ -343,7 +308,7 @@ export default class CreateRecipe extends Component {
           <Modal animationType="slide" visible={this.state.showImagePicker}>
             <ImagePicker handleClose={this.closeImagePicker} onSubmit={this.onSubmitImagePicker} existsCount={this.state.selectedEditPhotos.length}/>
           </Modal>
-          <View style={[styles.section, { marginBottom: 20 }]}>
+          <View style={[styles.section, { marginBottom: 20 }]} elevation={1}>
             <View style={styles.sectionHeader}>
               <View style={{ flexDirection: "row", alignItems: "center", }}>
                 <Text style={styles.subtitle}>
@@ -401,7 +366,7 @@ export default class CreateRecipe extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DefaultStyles.standardLightGray,
+    backgroundColor: "white",
     width: "100%",
   },
   header: {
@@ -415,13 +380,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: DefaultStyles.headerHeight,
     paddingTop: DefaultStyles.headerPaddingTop,
-    paddingRight: 20,
-    paddingLeft: 20,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 30,
-    // borderBottomWidth: 0.5,
-    // borderBottomColor: "black",
+    paddingRight: DefaultStyles.standardPadding,
+    paddingLeft: DefaultStyles.standardPadding,
+    borderBottomColor: DefaultStyles.standardBlack,
   },
   body: {
     // flex: 11,
@@ -432,10 +393,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   section: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    marginTop: 5,
+    ...DefaultStyles.cardStyle,
   },
   subtitle: {
     fontSize: 20,
@@ -448,11 +406,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   topsection: {
-    backgroundColor: "white",
-    padding: 20,
-    paddingTop: DefaultStyles.headerHeight,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    marginTop: DefaultStyles.headerHeight+20,
   },
   ingredient: {
     marginTop: 10,

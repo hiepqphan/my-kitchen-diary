@@ -39,9 +39,11 @@ export default class RecipeView extends Component {
               <SvgUri svgXmlData={IconChevronLeft} width="20" height="20"/>
             </TouchableOpacity>
           </View>
-          {this.props.data.recipeTitle !== "" ?
-          <Text style={{ fontSize: 25 }}>{this.props.data.recipeTitle}</Text> :
-          <Text style={{ fontSize: 25, fontStyle: "italic" }}>No title</Text>}
+          <TouchableOpacity style={{ flex: 1, alignItems: "center", justifyContent: "center" }} activeOpacity={0.8}>
+            {this.props.data.recipeTitle !== "" ?
+            <Text style={{ fontSize: 25 }} numberOfLines={1}>{this.props.data.recipeTitle}</Text> :
+            <Text style={{ fontSize: 25, fontStyle: "italic" }}>No title</Text>}
+          </TouchableOpacity>
           <View style={styles.option}>
 
           </View>
@@ -92,7 +94,7 @@ export default class RecipeView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DefaultStyles.standardLightGray,
+    backgroundColor: "white",
     width: "100%",
   },
   header: {
@@ -104,8 +106,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: DefaultStyles.headerHeight,
     paddingTop: DefaultStyles.headerPaddingTop,
-    paddingRight: 20,
-    paddingLeft: 20,
+    paddingRight: DefaultStyles.standardPadding,
+    paddingLeft: DefaultStyles.standardPadding,
   },
   body: {
     // flex: 11,
@@ -116,22 +118,14 @@ const styles = StyleSheet.create({
     height: 50,
   },
   section: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    marginTop: 5,
-    marginRight: 5,
-    marginLeft: 5,
+    ...DefaultStyles.cardStyle,
   },
   subtitle: {
     fontSize: 20,
     fontWeight: "600",
   },
   topsection: {
-    backgroundColor: "white",
-    padding: 20,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+
   },
   subheader: {
     flexDirection: "row",
