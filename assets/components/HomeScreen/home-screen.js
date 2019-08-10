@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, FlatList, Modal,
-         Platform, StatusBar, ScrollView, PanResponder,
-         Animated} from "react-native";
+         Platform, StatusBar, ScrollView, TouchableOpacity,
+         Animated, Dimensions, } from "react-native";
 
 import Firebase, { FirebaseContext } from "../Firebase";
 import Header from "./Header/header";
@@ -19,11 +19,31 @@ export default class HomeScreen extends Component {
                    hasResponder: { index: null, released: true },
                    currentRecipeData: null,
                    currentRecipeId: null,
-                   showRecipeModal: false, };
+                   indicatorShift: new Animated.Value(0), };
+
+    this.focusListener = this.props.navigation.addListener("didFocus", this.animateNavbar);
+    this.props.navigation.setParams({ fromOtherTab: false, });
   }
 
   componentDidMount() {
     this.getOneRecipePage();
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove();
+  }
+
+  animateNavbar = () => {
+    let parent = this.props.navigation.dangerouslyGetParent();
+    if (parent && parent.getParam("fromOtherTab")) {
+      parent.setParams({ fromOtherTab: false });
+      this.state.indicatorShift.setValue(DefaultStyles.navbarIndicatorWidth*2);
+      Animated.timing(this.state.indicatorShift, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
   }
 
   openCreateRecipe = () => {
@@ -44,26 +64,22 @@ export default class HomeScreen extends Component {
   }
 
   rerenderItemHandler = (index, released) => {
-    this.setState({ hasResponder: { index: index, released: released } });
+    // this.setState({ hasResponder: { index: index, released: released } });
   }
 
   showRecipe = (index) => {
-    this.setState({ currentRecipeData: this.state.recipes[index].data(),
-                    currentRecipeId: this.state.recipes[index].id,
-                    showRecipeModal: true, });
+    this.props.navigation.navigate("Recipe", { data: this.state.recipes[index].data(),
+                                               id: this.state.recipes[index].id });
   }
 
-  closeRecipeModal = () => {
-    this.setState({ showRecipeModal: false, })
+  goToCookedMealScreen = () => {
+    this.props.navigation.navigate("Meal");
+
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Modal visible={this.state.showRecipeModal} animationType="slide">
-          <RecipeView data={this.state.currentRecipeData} recipeId={this.state.currentRecipeId}
-                      handleClose={this.closeRecipeModal} />
-        </Modal>
         <Header title="Recipes" styleList={[styles.header]} createRecipeHandler={this.openCreateRecipe}/>
         <View style={styles.recipesContainer}>
           <FlatList data={this.state.recipes}
@@ -75,8 +91,19 @@ export default class HomeScreen extends Component {
                     onEndReached={this.getOneRecipePage}/>
         </View>
 
-        <View style={{ height: 60, width: "100%", backgroundColor: "orange" }}>
+        <View style={styles.navbar}>
+          <Animated.View style={[styles.indicator, { transform: [{translateX: this.state.indicatorShift}] }]}/>
+          <View style={styles.navbarOption}>
+            <TouchableOpacity style={styles.navbarButton} activeOpacity={1}>
 
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.navbarOption}>
+            <TouchableOpacity style={styles.navbarButton} onPress={this.goToCookedMealScreen} activeOpacity={1}>
+
+            </TouchableOpacity>
+          </View>
         </View>
         {
           //<Text>{Firebase.auth().currentUser.displayName}</Text>
@@ -92,7 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     width: "100%",
-    paddingTop: DefaultStyles.headerHeight,
   },
   header: {
 
@@ -100,5 +126,33 @@ const styles = StyleSheet.create({
   recipesContainer: {
     flex: 1,
     width: "100%",
-  }
+  },
+  navbar: {
+    position: "relative",
+    flexDirection: "row",
+    width: "100%",
+    height: 60,
+    borderTopWidth: 0.5,
+    borderTopColor: DefaultStyles.standardBlack,
+  },
+  navbarOption: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+  },
+  navbarButton: {
+    backgroundColor: "azure",
+    width: "50%",
+    height: "100%",
+  },
+  indicator: {
+    position: "absolute",
+    zIndex: 2,
+    top: 0,
+    left: DefaultStyles.navbarIndicatorWidth/2,
+    width: DefaultStyles.navbarIndicatorWidth,
+    borderTopWidth: 4,
+    borderTopColor: "#ff6633",
+  },
 });

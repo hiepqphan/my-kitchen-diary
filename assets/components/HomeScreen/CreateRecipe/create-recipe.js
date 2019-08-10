@@ -7,6 +7,7 @@ import SvgUri from "react-native-svg-uri";
 import { Overlay } from "react-native-elements";
 
 import { MealTypes, DefaultStyles, Rules, } from "../../Const/const";
+import Card from "../../UI/Card/card";
 import MealTypeItem from "./MealTypeItem/meal-type-item";
 import Ingredient from "./IngredientItem/ingredient-item";
 import ImagePicker from "../../Utilities/ImagePicker/image-picker";
@@ -251,7 +252,7 @@ export default class CreateRecipe extends Component {
 
         <ScrollView style={[styles.body]}
                     onScroll={this.handleHeaderShadow} onScrollEndDrag={this.handleHeaderShadow} onMomentumScrollEnd={this.handleHeaderShadow}>
-          <View style={[styles.section, styles.topsection]} elevation={1}>
+          <Card style={[styles.topsection]}>
             <View style={{ alignItems: "center", borderWidth: this.state.recipeNameOnFocus ? 1 : 0, borderColor: "white", borderBottomColor: "#ff6633" }}>
               <TextInput style={{ textAlign: "center", fontSize: 20 }} placeholder="Recipe name" multiline={false} maxLength={Rules.maxCharRecipeTitle}
                          onChangeText={(text) => this.setState({ recipeTitle: text })} value={this.state.recipeTitle}
@@ -260,19 +261,19 @@ export default class CreateRecipe extends Component {
             <View style={{ flexDirection: "row", justifyContent: "center", flexWrap: "wrap" }}>
               {mealTypesItems}
             </View>
-          </View>
+          </Card>
 
-          <View style={styles.section} elevation={1}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Card>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <Text style={styles.subtitle}>
                 Ingredients
               </Text>
               {!this.state.isEditingIngredients &&
-              <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ isEditingIngredients: true })}>
+              <TouchableOpacity style={styles.editButton} onPress={() => this.setState({ isEditingIngredients: true })}>
                 <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Edit</Text>
               </TouchableOpacity>}
               {this.state.isEditingIngredients &&
-              <TouchableOpacity style={styles.photoSectionButton} onPress={this.doneEditingIngredientsHandler}>
+              <TouchableOpacity style={styles.editButton} onPress={this.doneEditingIngredientsHandler}>
                 <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Done</Text>
               </TouchableOpacity>}
             </View>
@@ -284,17 +285,17 @@ export default class CreateRecipe extends Component {
               <SvgUri svgXmlData={IconPlus} width="15" height="15" fill="#ff6633" />
               <Text style={{ color: "#ffa64d", fontWeight: "600", marginLeft: 5 }}>add ingredient</Text>
             </TouchableOpacity>}
-          </View>
+          </Card>
 
           <Modal animationType="slide" visible={this.state.showInstructionsModal}>
             <InstructionsEdit closeHandler={this.instructionsModalCloseHandler} text={this.state.instructions}/>
           </Modal>
-          <View style={styles.section} elevation={1}>
-            <View style={{ flexDirection: "row", alignItems: "center", }}>
+          <Card>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
               <Text style={styles.subtitle}>
                 Instructions
               </Text>
-              <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ showInstructionsModal: true })}>
+              <TouchableOpacity style={styles.editButton} onPress={() => this.setState({ showInstructionsModal: true })}>
                 <Text style={{ color: "#ffa64d", fontWeight: "600", }}>Edit</Text>
               </TouchableOpacity>
             </View>
@@ -303,12 +304,12 @@ export default class CreateRecipe extends Component {
                          editable={false}
                          maxLength={Rules.maxCharInstructions} value={this.state.instructions}/>
             </View>
-          </View>
+          </Card>
 
           <Modal animationType="slide" visible={this.state.showImagePicker}>
             <ImagePicker handleClose={this.closeImagePicker} onSubmit={this.onSubmitImagePicker} existsCount={this.state.selectedEditPhotos.length}/>
           </Modal>
-          <View style={[styles.section, { marginBottom: 20 }]} elevation={1}>
+          <Card style={[{ marginBottom: 20 }]}>
             <View style={styles.sectionHeader}>
               <View style={{ flexDirection: "row", alignItems: "center", }}>
                 <Text style={styles.subtitle}>
@@ -345,7 +346,7 @@ export default class CreateRecipe extends Component {
                                                 padding: this.state.isEditingPhotos ? this.paddingWhenEditing : 0, }]}>
               {photos}
             </View>
-          </View>
+          </Card>
 
         </ScrollView>
 
@@ -393,7 +394,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   section: {
-    ...DefaultStyles.cardStyle,
+
   },
   subtitle: {
     fontSize: 20,
@@ -427,4 +428,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: 20,
   },
+  editButton: {
+
+  }
 });

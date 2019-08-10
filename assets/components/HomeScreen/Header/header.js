@@ -21,8 +21,6 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    zIndex: 2,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

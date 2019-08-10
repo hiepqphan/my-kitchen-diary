@@ -6,7 +6,9 @@ import SvgUri from "react-native-svg-uri";
 
 import { DefaultStyles } from "../../Const/const";
 import { IconChevronRight, IconTrashBin } from "../../../icons/icons";
+import MyMath from "../../Utilities/Math/math";
 
+// This component is for displaying a recipe in the recipe list in Homescreen
 export default class RecipeItem extends Component {
   constructor(props) {
     super(props);
@@ -28,23 +30,10 @@ export default class RecipeItem extends Component {
 
   }
 
-  lengthOfVector(v) {
-    return Math.sqrt(Math.pow(v.x,2)+Math.pow(v.y,2));
-  }
-
-  getSwipeAngle(gestureState) {
-    let dir = { x: gestureState.dx, y: gestureState.dy };
-    let horizontal = { x: 1, y: 0 };
-    let dotProd = dir.x*horizontal.x + dir.y*horizontal.y;
-    let lengthProd = this.lengthOfVector(dir)*this.lengthOfVector(horizontal);
-    let cos = dotProd/lengthProd;
-    return Math.acos(cos)*180/Math.PI; //Convert radian to degree
-  }
-
   shouldSetResponderHandler = (event, gestureState) => {
     // Origin is the touch's starting position. Ox goes right, Oy goes down.
     console.log("trying to grant");
-    let angle = this.getSwipeAngle(gestureState);
+    let angle = MyMath.getSwipeAngle(gestureState);
 
     if ((180-angle) <= 10) {
       this.setState({ swipingDir: "left" });
@@ -103,6 +92,12 @@ export default class RecipeItem extends Component {
   }
 
   render() {
+    let thumbnailUri = this.props.data.photos.length !== 0 ? this.props.data.photos[0].node.image.uri : null;
+
+    let tags = this.props.data.tags.map((item, index) => (
+      <View key={index} style={styles.tag}><Text style={{ color: "white" }}>{item}</Text></View>
+    ));
+
     return (
       <View style={{ position: "relative", top: 0, left: 0, flexDirection: "row" }} {...this.panResponderSetup.panHandlers}>
 
@@ -110,14 +105,27 @@ export default class RecipeItem extends Component {
           <TouchableOpacity style={styles.touchableContainer} onPress={() => this.props.showRecipe(this.props.index)}
                             activeOpacity={1}>
             <View style={styles.thumbnailContainer}>
-
+              <Image source={{ uri: thumbnailUri }} style={{ width: "100%", height: "100%", }}/>
             </View>
 
             <View style={styles.infoContainer}>
               <View>
                 {this.props.data.recipeTitle === "" ?
-                <Text style={{ fontStyle: "italic" }}>No title</Text> :
-                <Text>{this.props.data.recipeTitle}</Text>}
+                <Text style={{ fontSize: 16, fontStyle: "italic" }}>No title</Text> :
+                <Text style={{ fontSize: 16, }}>{this.props.data.recipeTitle}</Text>}
+              </View>
+
+              <View style={styles.tags}>
+                {tags}
+              </View>
+
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
+                <View>
+                  {this.props.data.mealCooked === undefined ? <Text style={[styles.subinfo, { fontStyle: "italic" }]}>No rating</Text> : <Text>{this.props.data.rating}</Text>}
+                </View>
+                <View>
+                  {this.props.data.mealCooked === undefined ? null : <Text style={styles.subinfo}>{this.props.data.mealCooked}</Text>}
+                </View>
               </View>
             </View>
 
@@ -183,5 +191,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     width: DefaultStyles.listItemHeight-DefaultStyles.standardPadding*2,
     height: "100%",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  tags: {
+    flexDirection: "row",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  tag: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffa64d",
+    paddingTop: 2,
+    paddingRight: 7,
+    paddingBottom: 2,
+    paddingLeft: 7,
+    borderRadius: 20,
+    marginRight: 5,
+  },
+  subinfo: {
+    color: DefaultStyles.standardBlack,
   }
 })
