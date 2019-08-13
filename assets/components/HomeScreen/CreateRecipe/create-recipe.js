@@ -237,7 +237,7 @@ export default class CreateRecipe extends Component {
     return(
       <>
       <View style={[styles.container, { position: "absolute", zIndex: 0, height: "100%" }]}/>
-      <View style={[styles.header, { borderBottomWidth: this.state.showHeaderShadow ? 0.5 : 0 } ]}>
+      <View style={[styles.header, { borderBottomWidth: 0.5 } ]}>
         <TouchableOpacity style={styles.option} onPress={this.closeRecipeScreen}>
           <SvgUri svgXmlData={IconChevronLeft} fill="#ff6633" width="20" height="20"/>
         </TouchableOpacity>
@@ -251,7 +251,7 @@ export default class CreateRecipe extends Component {
         <LoadingOverlay isVisible={this.state.isCreatingRecipe} title="Creating Recipe"/>
 
         <ScrollView style={[styles.body]}
-                    onScroll={this.handleHeaderShadow} onScrollEndDrag={this.handleHeaderShadow} onMomentumScrollEnd={this.handleHeaderShadow}>
+                    onScroll={null} onScrollEndDrag={this.handleHeaderShadow} onMomentumScrollEnd={this.handleHeaderShadow}>
           <Card style={[styles.topsection]}>
             <View style={{ alignItems: "center", borderWidth: this.state.recipeNameOnFocus ? 1 : 0, borderColor: "white", borderBottomColor: "#ff6633" }}>
               <TextInput style={{ textAlign: "center", fontSize: 20 }} placeholder="Recipe name" multiline={false} maxLength={Rules.maxCharRecipeTitle}
@@ -356,6 +356,7 @@ export default class CreateRecipe extends Component {
   }
 
   handleHeaderShadow = (event) => {
+    // Unused
     let scrollPos = event.nativeEvent.contentOffset.y;
     if (scrollPos > 0.1)
       this.setState({ showHeaderShadow: true });

@@ -105,7 +105,7 @@ export default class RecipeItem extends Component {
           <TouchableOpacity style={styles.touchableContainer} onPress={() => this.props.showRecipe(this.props.index)}
                             activeOpacity={1}>
             <View style={styles.thumbnailContainer}>
-              <Image source={{ uri: thumbnailUri }} style={{ width: "100%", height: "100%", }}/>
+              <Image source={{ uri: null }} style={{ width: "100%", height: "100%", }}/>
             </View>
 
             <View style={styles.infoContainer}>

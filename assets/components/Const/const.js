@@ -4,8 +4,8 @@ import { Dimensions } from "react-native";
 const Data = {
   mealTypes: [ "appetizer", "main course", "dessert", "drink", "other", ],
   styles: {
-    headerFontSize: 25,
-    headerHeight: 60+getStatusBarHeight(),
+    headerFontSize: 20,
+    headerHeight: 50+getStatusBarHeight(),
     headerPaddingTop: getStatusBarHeight(),
     headerStandardColor: "#e8e8e8",
     standardPadding: 15,
