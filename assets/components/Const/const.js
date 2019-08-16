@@ -1,5 +1,6 @@
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { Dimensions } from "react-native";
+import * as FileSystem from "expo-file-system";
 
 const Data = {
   mealTypes: [ "appetizer", "main course", "dessert", "drink", "other", ],
@@ -25,9 +26,13 @@ const Data = {
   screen: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+  },
+  paths: {
+    cachedRecipes: FileSystem.documentDirectory+"/cache/recipes/",
   }
 }
 
+export const Paths = Data.paths;
 export const Screen = Data.screen;
 export const Rules = Data.rules;
 export const DefaultStyles = Data.styles;

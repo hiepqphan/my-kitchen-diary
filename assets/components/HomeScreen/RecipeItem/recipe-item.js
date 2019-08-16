@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image,
          Animated, } from "react-native";
 import SvgUri from "react-native-svg-uri";
 
-import { DefaultStyles } from "../../Const/const";
+import { DefaultStyles, Paths } from "../../Const/const";
 import { IconChevronRight, IconTrashBin } from "../../../icons/icons";
 import MyMath from "../../Utilities/Math/math";
 
@@ -20,7 +20,7 @@ export default class RecipeItem extends Component {
     this.panResponderSetup = PanResponder.create({
       onStartShouldSetPanResponder: (event) => false,
       onMoveShouldSetPanResponder: this.shouldSetResponderHandler,
-      onPanResponderGrant: this.responderGrandHandler,
+      onPanResponderGrant: this.responderGrantHandler,
       onPanResponderMove: this.responderMoveHandler,
       onPanResponderRelease: this.responderReleaseHandler,
       onPanResponderTerminate: () => console.log("terminate"),
@@ -32,7 +32,6 @@ export default class RecipeItem extends Component {
 
   shouldSetResponderHandler = (event, gestureState) => {
     // Origin is the touch's starting position. Ox goes right, Oy goes down.
-    console.log("trying to grant");
     let angle = MyMath.getSwipeAngle(gestureState);
 
     if ((180-angle) <= 10) {
@@ -46,7 +45,7 @@ export default class RecipeItem extends Component {
     return false;
   }
 
-  responderGrandHandler = (event, gestureState) => {
+  responderGrantHandler = (event, gestureState) => {
     console.log(this.props.index);
   }
 
@@ -84,15 +83,13 @@ export default class RecipeItem extends Component {
   }
 
   responderReleaseHandler = (event, gestureState) => {
-    console.log('release');
-
     this.setState({ animating: false });
 
     setTimeout(this.slideItem, 5000);
   }
 
   render() {
-    let thumbnailUri = this.props.data.photos.length !== 0 ? this.props.data.photos[0].node.image.uri : null;
+    let thumbnailUri = this.props.data.photos.length !== 0 ? Paths.cachedRecipes+this.props.id+"/0.png" : null;
 
     let tags = this.props.data.tags.map((item, index) => (
       <View key={index} style={styles.tag}><Text style={{ color: "white" }}>{item}</Text></View>
@@ -101,11 +98,11 @@ export default class RecipeItem extends Component {
     return (
       <View style={{ position: "relative", top: 0, left: 0, flexDirection: "row" }} {...this.panResponderSetup.panHandlers}>
 
-        <Animated.View style={[styles.container, { transform: [{translateX: this.state.deleteButtonWidth}] }]}>
+        <Animated.View style={[styles.container, this.props.style, { transform: [{translateX: this.state.deleteButtonWidth}] }]}>
           <TouchableOpacity style={styles.touchableContainer} onPress={() => this.props.showRecipe(this.props.index)}
                             activeOpacity={1}>
             <View style={styles.thumbnailContainer}>
-              <Image source={{ uri: null }} style={{ width: "100%", height: "100%", }}/>
+              <Image source={{ uri: thumbnailUri, cache: "force-cache" }} style={{ width: "100%", height: "100%", }}/>
             </View>
 
             <View style={styles.infoContainer}>

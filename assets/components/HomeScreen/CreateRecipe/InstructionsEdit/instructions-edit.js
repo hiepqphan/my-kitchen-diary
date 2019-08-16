@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image,
          TouchableOpacity, TextInput, ScrollView, Modal,
-         Dimensions, Animated,
+         Dimensions, Animated, Platform,
          Keyboard, UIManager, } from "react-native";
 import SvgUri from "react-native-svg-uri";
 
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "100%",
     height: DefaultStyles.headerHeight,
-    paddingTop: DefaultStyles.headerPaddingTop,
+    paddingTop: Platform.OS === "android" ? 0 : DefaultStyles.headerPaddingTop,
     paddingRight: 20,
     paddingLeft: 20,
     borderBottomWidth: 0.5,

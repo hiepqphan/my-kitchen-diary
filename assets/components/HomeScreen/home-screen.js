@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, FlatList, Modal,
          Platform, StatusBar, ScrollView, TouchableOpacity,
-         Animated, Dimensions, } from "react-native";
+         Animated, Dimensions, Image, } from "react-native";
+import { Asset } from "expo-asset";
+import * as FileSystem from "expo-file-system";
 
 import Firebase, { FirebaseContext } from "../Firebase";
 import Header from "./Header/header";
-import { DefaultStyles } from "../Const/const";
+import { DefaultStyles, Paths } from "../Const/const";
 import RecipeItem from "./RecipeItem/recipe-item";
 import Auth from "../Authentication/authentication";
 import RecipeView from "./RecipeView/recipe-view";
@@ -19,9 +21,12 @@ export default class HomeScreen extends Component {
                    hasResponder: { index: null, released: true },
                    currentRecipeData: null,
                    currentRecipeId: null,
-                   indicatorShift: new Animated.Value(0), };
+                   indicatorShift: new Animated.Value(0),
+                   loadingRecipes: false, };
 
     this.focusListener = this.props.navigation.addListener("didFocus", this.animateNavbar);
+    this.cachedRecipes = {};
+
     this.props.navigation.setParams({ fromOtherTab: false, });
   }
 
@@ -31,6 +36,96 @@ export default class HomeScreen extends Component {
 
   componentWillUnmount() {
     this.focusListener.remove();
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Header title="Recipes" styleList={[styles.header]} createRecipeHandler={this.openCreateRecipe}/>
+        <View style={styles.recipesContainer}>
+          <FlatList data={this.state.recipes}
+                    extraData={this.state.hasResponder}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={ ({item, index}) => <RecipeItem index={index} data={item.data()} id={item.id}
+                                                                showRecipe={this.showRecipe}/> }
+                    onEndReached={this.getOneRecipePage}/>
+        </View>
+
+        <View style={styles.navbar}>
+          <Animated.View style={[styles.indicator, { transform: [{translateX: this.state.indicatorShift}] }]}/>
+          <View style={styles.navbarOption}>
+            <TouchableOpacity style={styles.navbarButton} activeOpacity={1}>
+
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.navbarOption}>
+            <TouchableOpacity style={styles.navbarButton} onPress={this.goToCookedMealScreen} activeOpacity={1}>
+
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      </View>
+    );
+  }
+
+  cacheImages = (images) => {
+    return images.map(image => {
+      if (image === "")
+        return null;
+
+    });
+  }
+
+  cacheRecipeAssets = async (id, data) => {
+    let photos = data.photos.map((item) => (
+      item.node.image.uri
+    ));
+    photos = photos.slice(1);
+    photos = this.cacheImages(photos);
+
+    await Promise.all([...photos]);
+  }
+
+  cacheRecipesThumbnail = async (recipes) => {
+    let photos = recipes.map((item) => {
+      if (item.data().photos.length > 0)
+        return { id: item.id, uri: item.data().photos[0].node.image.uri };
+      else
+        return "";
+    });
+
+    let check = (count) => {
+      if (count === photos.length)
+        this.setState({ lastRecipe: recipes[recipes.length-1],
+                        recipes: this.state.recipes.concat(recipes),
+                        loadingRecipes: false, });
+    };
+
+    let count = 0;
+
+    photos.map(photo => {
+      if (photo !== "")
+        FileSystem.getInfoAsync(Paths.cachedRecipes+photo.id+"/0.png").then(({ exists }) => {
+            if (!exists) {
+              FileSystem.makeDirectoryAsync(Paths.cachedRecipes+photo.id, { intermediates: true }).then(() => {
+                FileSystem.downloadAsync(photo.uri, Paths.cachedRecipes+photo.id+"/0.png").then(() => {
+                  ++count;
+                  check(count);
+                });
+              });
+            }
+            else {
+              ++count;
+              check(count);
+            }
+          });
+      else {
+        ++count;
+        check(count);
+      }
+    })
   }
 
   animateNavbar = () => {
@@ -52,10 +147,12 @@ export default class HomeScreen extends Component {
 
   getOneRecipePage = () => {
     if (this.state.hasMoreRecipes) {
+      this.setState({ loadingRecipes: true });
+
       let limit = 20;
       Auth.getRecipes(this.state.lastRecipe, limit).then(result => {
-        this.setState({ lastRecipe: result[result.length-1],
-                        recipes: this.state.recipes.concat(result) });
+        if (result.length > 0)
+          this.cacheRecipesThumbnail(result);
 
         if (result.length < limit)
           this.setState({ hasMoreRecipes: false });
@@ -63,13 +160,15 @@ export default class HomeScreen extends Component {
     }
   }
 
-  rerenderItemHandler = (index, released) => {
-    // this.setState({ hasResponder: { index: index, released: released } });
-  }
-
   showRecipe = (index) => {
-    this.props.navigation.navigate("Recipe", { data: this.state.recipes[index].data(),
-                                               id: this.state.recipes[index].id });
+    let recipeId = this.state.recipes[index].id;
+    FileSystem.getInfoAsync(Paths.cachedRecipes+recipeId).then(({ exists }) => {
+      let needCached = !exists;
+      this.props.navigation.navigate("Recipe", { data: this.state.recipes[index].data(),
+                                                 id: recipeId,
+                                                 needCached: needCached,
+                                                 cacheAssets: this.cacheRecipeAssets, });
+    });
   }
 
   goToCookedMealScreen = () => {
@@ -77,41 +176,6 @@ export default class HomeScreen extends Component {
 
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Header title="Recipes" styleList={[styles.header]} createRecipeHandler={this.openCreateRecipe}/>
-        <View style={styles.recipesContainer}>
-          <FlatList data={this.state.recipes}
-                    extraData={this.state.hasResponder}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={ ({item, index}) => <RecipeItem index={index} data={item.data()} rerender={this.rerenderItemHandler}
-                                                                hasResponder={this.state.hasResponder.index === index}
-                                                                showRecipe={this.showRecipe} /> }
-                    onEndReached={this.getOneRecipePage}/>
-        </View>
-
-        <View style={styles.navbar}>
-          <Animated.View style={[styles.indicator, { transform: [{translateX: this.state.indicatorShift}] }]}/>
-          <View style={styles.navbarOption}>
-            <TouchableOpacity style={styles.navbarButton} activeOpacity={1}>
-
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.navbarOption}>
-            <TouchableOpacity style={styles.navbarButton} onPress={this.goToCookedMealScreen} activeOpacity={1}>
-
-            </TouchableOpacity>
-          </View>
-        </View>
-        {
-          //<Text>{Firebase.auth().currentUser.displayName}</Text>
-      }
-
-      </View>
-    );
-  }
 }
 
 const styles = StyleSheet.create({

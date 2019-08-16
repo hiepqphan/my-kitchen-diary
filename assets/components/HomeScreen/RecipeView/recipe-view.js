@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, FlatList, Modal, Image,
-         ScrollView, TouchableOpacity, PanResponder, } from "react-native";
+         ScrollView, TouchableOpacity, PanResponder,
+         Platform, } from "react-native";
 import SvgUri from "react-native-svg-uri";
 import { LinearGradient } from "expo-linear-gradient";
+import { Video } from "expo-av";
 
 import { DefaultStyles, Screen } from "../../Const/const";
 import { IconChevronLeft, IconChevronUp } from "../../../icons/icons";
@@ -18,9 +20,11 @@ export default class RecipeView extends Component {
   constructor(props) {
     super(props);
     this.state = { photoSize: (Screen.width-10-40-9)/4,
-                   scrollEnabled: true, };
+                   scrollEnabled: true,
+                   loaded: !this.props.navigation.getParam("needCached", false), };
 
     this.data = this.props.navigation.getParam("data", {});
+    this.recipeId = this.props.navigation.getParam("id", null);
     this.state.recipeTitle = this.data.recipeTitle;
     this.state.ingredients = this.data.ingredients;
     this.state.instructions = this.data.instructions;
@@ -35,43 +39,17 @@ export default class RecipeView extends Component {
     });
   }
 
-  closeView = () => {
-    this.props.navigation.navigate("Home");
-  }
-
-  scrollControl = (event) => {
-    let pos = event.nativeEvent.contentOffset.y;
-    if (pos === Screen.height)
-      this.setState({ scrollEnabled: false });
-    else
-      this.setState({ scrollEnabled: true });
-  }
-
-  scrollToTopHandler = (event, gestureState) => {
-    if (MyMath.isSwipingDown(gestureState) && Math.abs(gestureState.vy) >= 0.5) {
-      this.scrollView.scrollTo({ y: 0, animated: true });
-      this.setState({ scrollEnabled: true });
+  componentDidMount() {
+    if (!this.state.loaded) {
+      let cacheAssets = this.props.navigation.getParam("cacheAssets", null);
+      if (cacheAssets)
+        cacheAssets(this.recipeId, this.data).then(() => {
+          this.setState({ loaded: true });
+        })
     }
   }
 
-  renderImage = ({item}) => {
-    return (
-      <View>
-        <Image source={{ uri: null }} style={{ width: Screen.width, height: Screen.height }}/>
-      </View>
-    );
-  }
-
-  renderImageDefault = ({item}) => {
-    return (
-      <View>
-        <Image source={require("../../../images/default_recipe_photo.png")} style={{ width: Screen.width, height: Screen.height }}/>
-      </View>
-    )
-  }
-
   render() {
-
     let ingredients = this.state.ingredients.map((item, index) => (
       <IngredientItem editable={false} ingredientText={item.ingredient}
                       quantityText={item.quantity} style={{ marginTop: index !== 0 ? 3 : 0 }}
@@ -95,12 +73,15 @@ export default class RecipeView extends Component {
             </View>
           </View>
 
+          {this.state.loaded ?
           <FlatList horizontal={true}
                     keyExtractor={(item, index) => index.toString()}
                     data={this.state.photos.length > 0 ? this.state.photos : this.defaultPhoto}
                     renderItem={this.state.photos.length > 0 ? this.renderImage : this.renderImageDefault}
                     snapToInterval={Screen.width}
-                    decelerationRate="fast"/>
+                    decelerationRate="fast"/> :
+          <Video source={{ uri: "" }} style={{ width: Screen.width, height: Screen.height }} resizeMode="cover"
+                 useNativeControls={false} shouldPlay isLooping/>}
 
           <LinearGradient colors={["rgba(255, 255, 255, 0.0)", "rgba(255, 255, 255, 1.0)"]}
                           style={{ position: "absolute", left: 0, bottom: 0, zIndex: 2, width: "100%", height: 200 }}/>
@@ -155,6 +136,45 @@ export default class RecipeView extends Component {
       </ScrollView>
     );
   }
+
+  closeView = () => {
+    this.props.navigation.navigate("Home");
+  }
+
+  scrollControl = (event) => {
+    let pos = event.nativeEvent.contentOffset.y;
+    if (pos >= Screen.height/2)
+      this.setState({ scrollEnabled: false });
+    else
+      this.setState({ scrollEnabled: true });
+  }
+
+  scrollToTopHandler = (event, gestureState) => {
+    if (MyMath.isSwipingDown(gestureState) && Math.abs(gestureState.vy) >= 0.5) {
+      this.scrollView.scrollTo(Platform.OS === "android" ? { y: 0, duration: 500 } : { y: 0, animated: true });
+      this.setState({ scrollEnabled: true });
+    }
+    else {
+      this.scrollView.scrollToEnd({ animated: true });
+    }
+  }
+
+  renderImage = ({item}) => {
+    return (
+      <View>
+        <Image source={{ uri: item.node.image.uri, cache: "force-cache", }} style={{ width: Screen.width, height: Screen.height }}/>
+      </View>
+    );
+  }
+
+  renderImageDefault = ({item}) => {
+    return (
+      <View>
+        <Image source={require("../../../images/default_recipe_photo.png")} style={{ width: Screen.width, height: Screen.height }}/>
+      </View>
+    )
+  }
+
 }
 
 const styles = StyleSheet.create({

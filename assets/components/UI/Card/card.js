@@ -7,7 +7,7 @@ export default class Card extends React.Component {
 
   render() {
     return (
-      <View style={[styles.container].concat(this.props.style)} elevation={1}>
+      <View style={[styles.container].concat(this.props.style)} elevation={4}>
         {this.props.children}
       </View>
     );
