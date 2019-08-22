@@ -5,16 +5,28 @@ import * as FileSystem from "expo-file-system";
 const Data = {
   mealTypes: [ "appetizer", "main course", "dessert", "drink", "other", ],
   styles: {
-    headerFontSize: 20,
+    headerFontSize: 22,
     headerHeight: 50+getStatusBarHeight(),
+    headerHeightModalAndroid: 50,
     headerPaddingTop: getStatusBarHeight(),
     headerStandardColor: "#e8e8e8",
     standardPadding: 15,
     standardBlue: "rgb(0, 122, 255)",
     standardBlack: "#ddd",
-    standardLightGray: "#f5f5f5",
+    standardLightGray: "rgb(229, 229, 234)",
     listItemHeight: 100,
     navbarIndicatorWidth: Dimensions.get("window").width / 4,
+  },
+  colors: {
+    turquoise: "#35d0ba",
+    turquoise_tint: "#89d0c6",
+    bisque: "#fefed5",
+    yellow: "#ffcd3c",
+    yellow_tint: "#ffecb0",
+    orange: "#ff9234",
+    lightgray: "rgb(229, 229, 234)",
+    gray: "rgb(199, 199, 204)",
+    black: "#262626",
   },
   rules: {
     maxPhotosPerRecipe: 20,
@@ -32,6 +44,7 @@ const Data = {
   }
 }
 
+export const Colors = Data.colors;
 export const Paths = Data.paths;
 export const Screen = Data.screen;
 export const Rules = Data.rules;

@@ -43,15 +43,15 @@ export default class RecipeView extends Component {
     if (!this.state.loaded) {
       let cacheAssets = this.props.navigation.getParam("cacheAssets", null);
       if (cacheAssets)
-        cacheAssets(this.recipeId, this.data).then(() => {
+        cacheAssets(this.recipeId, this.data, () => {
           this.setState({ loaded: true });
-        })
+        });
     }
   }
 
   render() {
     let ingredients = this.state.ingredients.map((item, index) => (
-      <IngredientItem editable={false} ingredientText={item.ingredient}
+      <IngredientItem editable={false} ingredientText={item.ingredient} index={index}
                       quantityText={item.quantity} style={{ marginTop: index !== 0 ? 3 : 0 }}
                       quantityPlaceholder=""
                       key={index}/>

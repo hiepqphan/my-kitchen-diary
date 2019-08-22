@@ -53,7 +53,7 @@ export default class KeyboardSafeView extends Component {
 
   render() {
     return(
-      <Animated.View style={this.props.style.concat([{ transform: [{translateY: this.state.screenShift}] }, ])}>
+      <Animated.View style={{ ...this.props.style, transform: [{translateY: this.state.screenShift}] }}>
         {this.props.children}
       </Animated.View>
     );

@@ -70,22 +70,24 @@ export default class HomeScreen extends Component {
     );
   }
 
-  cacheImages = (images) => {
-    return images.map(image => {
-      if (image === "")
-        return null;
-
+  cacheImages = (images, callback = null) => {
+    let count = 0;
+    let target = images.length;
+    images.map(image => {
+      FileSystem.downloadAsync(image.uri, Paths.cachedRecipes+image.id+`/${index}.png`).then(() => {
+        ++count;
+        if (count === target && callback)
+          callback();
+      })
     });
   }
 
-  cacheRecipeAssets = async (id, data) => {
+  cacheRecipeAssets = async (id, data, callback = null) => {
     let photos = data.photos.map((item) => (
-      item.node.image.uri
+      { id: item.id, uri: item.node.image.uri }
     ));
     photos = photos.slice(1);
-    photos = this.cacheImages(photos);
-
-    await Promise.all([...photos]);
+    this.cacheImages(photos, callback);
   }
 
   cacheRecipesThumbnail = async (recipes) => {
@@ -93,7 +95,7 @@ export default class HomeScreen extends Component {
       if (item.data().photos.length > 0)
         return { id: item.id, uri: item.data().photos[0].node.image.uri };
       else
-        return "";
+        return { id: item.id, uri: "" };
     });
 
     let check = (count) => {
@@ -106,14 +108,13 @@ export default class HomeScreen extends Component {
     let count = 0;
 
     photos.map(photo => {
-      if (photo !== "")
-        FileSystem.getInfoAsync(Paths.cachedRecipes+photo.id+"/0.png").then(({ exists }) => {
-            if (!exists) {
-              FileSystem.makeDirectoryAsync(Paths.cachedRecipes+photo.id, { intermediates: true }).then(() => {
-                FileSystem.downloadAsync(photo.uri, Paths.cachedRecipes+photo.id+"/0.png").then(() => {
-                  ++count;
-                  check(count);
-                });
+      FileSystem.getInfoAsync(Paths.cachedRecipes+photo.id+"/0.png").then(({ exists }) => {
+        if (!exists) {
+          FileSystem.makeDirectoryAsync(Paths.cachedRecipes+photo.id, { intermediates: true }).then(() => {
+            if (photo.uri !== "") {
+              FileSystem.downloadAsync(photo.uri, Paths.cachedRecipes+photo.id+"/0.png").then(() => {
+                ++count;
+                check(count);
               });
             }
             else {
@@ -121,11 +122,14 @@ export default class HomeScreen extends Component {
               check(count);
             }
           });
-      else {
-        ++count;
-        check(count);
-      }
-    })
+        }
+        else {
+          ++count;
+          check(count);
+        }
+      });
+    });
+
   }
 
   animateNavbar = () => {
