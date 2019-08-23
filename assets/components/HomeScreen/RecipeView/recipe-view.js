@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, FlatList, Modal, Image,
          ScrollView, TouchableOpacity, PanResponder,
-         Platform, } from "react-native";
+         Platform, Animated } from "react-native";
 import SvgUri from "react-native-svg-uri";
 import { LinearGradient } from "expo-linear-gradient";
 import { Video } from "expo-av";
 
-import { DefaultStyles, Screen } from "../../Const/const";
+import { DefaultStyles, Screen, Colors } from "../../Const/const";
 import { IconChevronLeft, IconChevronUp } from "../../../icons/icons";
 import Auth from "../../Authentication/authentication";
 import IngredientItem from "../CreateRecipe/IngredientItem/ingredient-item";
@@ -15,13 +15,18 @@ import Card from "../../UI/Card/card";
 import MyMath from "../../Utilities/Math/math";
 import BackgroundImage from "../../UI/BackgroundImage/background-image";
 import { NotFoundIngredients, NotFoundInstructions } from "../../UI/NotFoundDisplay/not-found-display";
+import MyText, { TextSubtitle } from "../../UI/Text/text";
 
 export default class RecipeView extends Component {
   constructor(props) {
     super(props);
     this.state = { photoSize: (Screen.width-10-40-9)/4,
                    scrollEnabled: true,
-                   loaded: !this.props.navigation.getParam("needCached", false), };
+                   loaded: !this.props.navigation.getParam("needCached", false),
+                   currentView: "ingredients",
+                   indicatorShift: new Animated.Value(0),
+                   indicatorTop: 0,
+                   indicatorWidth: 0, };
 
     this.data = this.props.navigation.getParam("data", {});
     this.recipeId = this.props.navigation.getParam("id", null);
@@ -52,7 +57,7 @@ export default class RecipeView extends Component {
   render() {
     let ingredients = this.state.ingredients.map((item, index) => (
       <IngredientItem editable={false} ingredientText={item.ingredient} index={index}
-                      quantityText={item.quantity} style={{ marginTop: index !== 0 ? 3 : 0 }}
+                      quantityText={item.quantity} style={{ marginTop: index !== 0 ? 5 : 0 }}
                       quantityPlaceholder=""
                       key={index}/>
     ));
@@ -95,7 +100,7 @@ export default class RecipeView extends Component {
         </View>
 
         <View style={[styles.container, styles.fullheight]}>
-          <View style={{...styles.header, ...styles.recipeHeader }} {...this.panResponderSetup.panHandlers}>
+          <View style={{ ...styles.header, ...styles.recipeHeader }} {...this.panResponderSetup.panHandlers}>
             <View style={{ backgroundColor: DefaultStyles.standardBlack, width: 35, height: 8, borderRadius: 4, marginTop: 5}}/>
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
               {this.state.recipeTitle !== "" ?
@@ -103,38 +108,76 @@ export default class RecipeView extends Component {
               <Text style={{ fontSize: DefaultStyles.headerFontSize, fontStyle: "italic" }}>No title</Text>}
             </View>
           </View>
+          <View style={{ ...styles.navbar }} onLayout={this.navbarIndicatorHandler}>
+            <Animated.View style={{ ...styles.indicator, top: this.state.indicatorTop, width: this.state.indicatorWidth, transform: [{ translateX: this.state.indicatorShift }], }}/>
+
+            <TouchableOpacity style={styles.navbarOption} onPress={this.ingredientsOnPress}>
+              <MyText style={{ color: this.state.currentView === "ingredients" ? Colors.orange : Colors.gray, fontWeight: "500", }}>Ingredients</MyText>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.navbarOption} onPress={this.instructionsOnPress}>
+              <MyText style={{ color: this.state.currentView === "instructions" ? Colors.orange : Colors.gray, fontWeight: "500" }}>
+                Instructions
+              </MyText>
+            </TouchableOpacity>
+          </View>
 
           <ScrollView style={styles.body}>
-            <Card style={styles.section}>
-              <BackgroundImage source={require("../../../images/header_ingredients.png")} style={styles.backgroundImage}>
-                <View style={styles.subheader}>
-                  <Text style={styles.subtitle}>Ingredients</Text>
-                </View>
-              </BackgroundImage>
+            {this.state.currentView === "ingredients" &&
+            <View style={styles.section}>
+              <View style={styles.subheader}>
+                {false && <TextSubtitle style={styles.subtitle}>Ingredients</TextSubtitle>}
+              </View>
 
               <View style={styles.subbody}>
                 {ingredients.length > 0 ? ingredients :
                 <NotFoundIngredients/>}
               </View>
-            </Card>
+            </View>}
 
-            <Card style={{ ...styles.section, marginBottom: 20, }}>
-              <BackgroundImage source={require("../../../images/header_instructions.png")} style={styles.backgroundImage}>
-                <View style={styles.subheader}>
-                  <Text style={styles.subtitle}>Instructions</Text>
-                </View>
-              </BackgroundImage>
+            {this.state.currentView === "instructions" &&
+            <View style={{ ...styles.section, }}>
+              <View style={styles.subheader}>
+                {false && <TextSubtitle style={styles.subtitle}>Instructions</TextSubtitle>}
+              </View>
+
               <View style={styles.subbody}>
                 {this.state.instructions !== "" ?
-                <Text>{this.state.instructions}</Text> :
+                <MyText>{this.state.instructions}</MyText> :
                 <NotFoundInstructions/>}
               </View>
-            </Card>
+            </View>}
 
           </ScrollView>
         </View>
       </ScrollView>
     );
+  }
+
+  ingredientsOnPress = () => {
+    this.setState({ currentView: "ingredients" });
+    this.animateIndicatorTo("ingredients");
+  }
+
+  instructionsOnPress = () => {
+    this.setState({ currentView: "instructions"});
+    this.animateIndicatorTo("instructions");
+  }
+
+  animateIndicatorTo = (section) => {
+    Animated.timing(this.state.indicatorShift, {
+      toValue: this.targetShift[section],
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }
+
+  navbarIndicatorHandler = (event) => {
+    let width = event.nativeEvent.layout.width;
+    let height = event.nativeEvent.layout.height;
+    let shift = width/100*20/4;
+    let indicatorWidth = width/100*40;
+    this.targetShift = { ingredients: shift, instructions: shift+indicatorWidth+shift*2 };
+    this.setState({ indicatorTop: height-4, indicatorShift: new Animated.Value(shift), indicatorWidth: indicatorWidth });
   }
 
   closeView = () => {
@@ -205,12 +248,36 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-around",
-    borderBottomWidth: 0.5,
+    // borderBottomWidth: 0.5,
     borderBottomColor: DefaultStyles.standardBlack,
+  },
+  navbar: {
+    position: "relative",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+    paddingTop: 5,
+    paddingBottom: 5,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.lightgray,
+  },
+  navbarOption: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "40%",
+    height: 30,
+  },
+  indicator: {
+    position: "absolute",
+    zIndex: 2,
+    left: 0,
+    borderBottomWidth: 4,
+    borderBottomColor: Colors.orange,
   },
   body: {
     // flex: 11,
-    backgroundColor: DefaultStyles.standardLightGray,
+    backgroundColor: "white",
   },
   option: {
     justifyContent: "center",
@@ -219,11 +286,11 @@ const styles = StyleSheet.create({
   },
   section: {
     padding: 0,
+    margin: DefaultStyles.standardPadding,
+    marginBottom: 100,
   },
   subtitle: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "600",
+
   },
   topsection: {
 
@@ -232,11 +299,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
   },
   subbody: {
     marginTop: 10,

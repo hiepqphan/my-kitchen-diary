@@ -24,9 +24,10 @@ const Data = {
     yellow: "#ffcd3c",
     yellow_tint: "#ffecb0",
     orange: "#ff9234",
+    orange_tint: "#ffb070",
     lightgray: "rgb(229, 229, 234)",
     gray: "rgb(199, 199, 204)",
-    black: "#262626",
+    black: "#3d3935",
   },
   rules: {
     maxPhotosPerRecipe: 20,

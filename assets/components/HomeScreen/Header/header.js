@@ -5,12 +5,13 @@ import SvgUri from "react-native-svg-uri";
 
 import { DefaultStyles, Colors } from "../../Const/const";
 import { IconPlus } from "../../../icons/icons";
+import { TextTitle } from "../../UI/Text/text";
 
 export default class Header extends Component {
   render() {
     return(
       <View style={[styles.container].concat(this.props.styleList)}>
-        <Text style={styles.title}>{this.props.title}</Text>
+        <TextTitle style={{  }}>{this.props.title}</TextTitle>
         <TouchableOpacity onPress={this.props.createRecipeHandler} activeOpacity={1} style={styles.addButtonContainer}>
           <SvgUri style={styles.addButton} width="25" height="25" svgXmlData={IconPlus} fill={Colors.orange}/>
         </TouchableOpacity>
@@ -28,20 +29,16 @@ const styles = StyleSheet.create({
     width: "100%",
     height: DefaultStyles.headerHeight,
     paddingTop: DefaultStyles.headerPaddingTop,
-    paddingRight: DefaultStyles.standardPadding,
     paddingLeft: DefaultStyles.standardPadding,
-    borderBottomWidth: 0.5,
+    // borderBottomWidth: 0.5,
     borderBottomColor: DefaultStyles.standardBlack,
-  },
-  title: {
-    fontSize: DefaultStyles.headerFontSize,
-    fontWeight: "600",
   },
   addButtonContainer: {
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-end",
     width: 35,
     height: 35,
+    paddingRight: DefaultStyles.standardPadding,
   },
   addButton: {
     width: 25,

@@ -46,7 +46,7 @@ export default class InstructionsEdit extends Component {
             <TextTitle style={styles.title}>Instructions</TextTitle>
           </View>
           <TouchableOpacity style={styles.doneButton} onPress={() => this.props.closeHandler(this.state.text)}>
-            <MyText style={{ textAlign: "right", color: Colors.orange, fontWeight: "600" }}>Done</MyText>
+            <MyText style={{ textAlign: "right", color: Colors.orange, fontWeight: "500" }}>Done</MyText>
           </TouchableOpacity>
         </View>
         <View style={styles.body}>

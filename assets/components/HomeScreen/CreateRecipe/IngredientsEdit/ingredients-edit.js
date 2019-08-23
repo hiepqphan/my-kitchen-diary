@@ -34,7 +34,7 @@ export default class IngredientsEdit extends React.Component {
             <TextTitle style={styles.title}>Ingredients</TextTitle>
           </View>
           <TouchableOpacity style={styles.doneButton} onPress={() => this.props.closeHandler(this.state.ingredients)}>
-            <MyText style={{ textAlign: "right", color: Colors.orange, fontWeight: "600" }}>Done</MyText>
+            <MyText style={{ textAlign: "right", color: Colors.orange, fontWeight: "500" }}>Done</MyText>
           </TouchableOpacity>
         </View>
 
@@ -43,7 +43,7 @@ export default class IngredientsEdit extends React.Component {
             {ingredients}
             <TouchableOpacity style={styles.addmoreButton} onPress={this.addIngredientInput} activeOpacity={1}>
               <SvgUri svgXmlData={IconPlus} width="15" height="15" fill={Colors.orange} />
-              <MyText style={{ color: Colors.orange, fontWeight: "600", marginLeft: 5 }}>add ingredient</MyText>
+              <MyText style={{ color: Colors.orange, fontWeight: "500", marginLeft: 5 }}>add ingredient</MyText>
             </TouchableOpacity>
           </ScrollView>
         </View>

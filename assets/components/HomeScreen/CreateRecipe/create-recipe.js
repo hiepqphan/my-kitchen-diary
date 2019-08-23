@@ -43,7 +43,8 @@ export default class CreateRecipe extends Component {
 
     this.paddingWhenEditing = 5;
     this.windowWidth = Dimensions.get("window").width;
-    this.state.photoSize = (this.windowWidth - 3*3 - 47) / 4;
+    this.photosContainerWidth = this.windowWidth - 3*3 - 40;
+    this.state.photoSize = this.photosContainerWidth / 4;
 
     // Custom back behavior on Android
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
@@ -79,6 +80,10 @@ export default class CreateRecipe extends Component {
                   editable={false}/>
     ));
 
+    let iconIngredients = <Image source={require("../../../images/ingredients.png")} style={{ width: 40, height: 40, }} resizeMode="contain"/>;
+
+    let iconInstructions = <Image source={require("../../../images/instructions.png")} style={{ width: 30, height: 30, }} resizeMode="contain"/>;
+
     let photos = this.state.selectedPhotos.map((item, index) => (
       <ImageView key={index} index={index} uri={item.node.image.uri} size={this.state.photoSize} style={[styles.photo, { marginTop: index < 4 ? 0 : 3, marginRight: index % 4 === 3 ? 0 : 3, }]}
                  selected={this.state.selectedEditPhotos.includes(index)} selectToggler={this.selectPhotoHandler}/>
@@ -89,11 +94,11 @@ export default class CreateRecipe extends Component {
       <View style={[styles.container, { position: "absolute", zIndex: 0, height: "100%" }]}/>
       <View style={[styles.header, { borderBottomWidth: 0 } ]}>
         <TouchableOpacity style={styles.option} onPress={this.closeRecipeScreen}>
-          <SvgUri svgXmlData={IconChevronLeft} fill="white" width="20" height="20"/>
+          <SvgUri svgXmlData={IconChevronLeft} fill={Colors.orange} width="20" height="20"/>
         </TouchableOpacity>
-        <TextTitle style={{ color: "white" }}>New Recipe</TextTitle>
+        <TextTitle style={{  }}>New Recipe</TextTitle>
         <TouchableOpacity style={styles.option} onPress={this.createRecipe}>
-          <MyText style={{ textAlign: "right", color: "white", fontWeight: "600" }}>Create</MyText>
+          <MyText style={{ textAlign: "right", color: Colors.orange, fontWeight: "500" }}>Create</MyText>
         </TouchableOpacity>
       </View>
 
@@ -102,8 +107,7 @@ export default class CreateRecipe extends Component {
 
         <ScrollView style={[styles.body]}>
           <View style={{ ...styles.section, ...styles.topsection }}>
-            <MyView style={{ alignItems: "center", borderWidth: this.state.recipeNameOnFocus ? 1 : 0, borderColor: "white", borderBottomColor: "#ff6633" }}
-                    showDot={true} >
+            <MyView style={{ alignItems: "center", borderWidth: this.state.recipeNameOnFocus ? 1 : 0, borderColor: "white", borderBottomColor: Colors.orange }}>
               <MyTextInput style={{ textAlign: "center" }} placeholder="Recipe name" multiline={false} maxLength={Rules.maxCharRecipeTitle}
                          onChangeText={(text) => this.setState({ recipeTitle: text })} value={this.state.recipeTitle}
                          onFocus={() => this.setState({ recipeNameOnFocus: true })} onBlur={() => this.setState({ recipeNameOnFocus: false })}/>
@@ -118,13 +122,12 @@ export default class CreateRecipe extends Component {
             <IngredientsEdit closeHandler={this.ingredientsModalCloseHandler} ingredients={this.state.ingredients}/>
           </Modal>
           <View style={{ ...styles.section }}>
-            <MyView style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
-                    showDot={true}>
+            <MyView style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <TextSubtitle style={styles.subtitle}>
                 Ingredients
               </TextSubtitle>
               <TouchableOpacity style={styles.editButton} onPress={() => this.setState({ showIngredientsModal: true })}>
-                <MyText style={{ color: Colors.orange, fontWeight: "600", }}>Edit</MyText>
+                <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Edit</MyText>
               </TouchableOpacity>
             </MyView>
             <View style={styles.sectionBody}>
@@ -138,13 +141,12 @@ export default class CreateRecipe extends Component {
             <InstructionsEdit closeHandler={this.instructionsModalCloseHandler} text={this.state.instructions}/>
           </Modal>
           <View style={{ ...styles.section }}>
-            <MyView style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}
-                    showDot={true}>
+            <MyView style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
               <TextSubtitle style={styles.subtitle}>
                 Instructions
               </TextSubtitle>
               <TouchableOpacity style={styles.editButton} onPress={() => this.setState({ showInstructionsModal: true })}>
-                <MyText style={{ color: Colors.orange, fontWeight: "600", }}>Edit</MyText>
+                <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Edit</MyText>
               </TouchableOpacity>
             </MyView>
             <View style={[styles.sectionBody, { paddingBottom: this.state.instructionsInputSelected ? 10 : 0 }]}>
@@ -158,26 +160,26 @@ export default class CreateRecipe extends Component {
             <ImagePicker handleClose={this.closeImagePicker} onSubmit={this.onSubmitImagePicker} existsCount={this.state.selectedEditPhotos.length}/>
           </Modal>
           <View style={{ ...styles.section, marginBottom: 200 }}>
-            <MyView style={styles.sectionHeader} showDot={true}>
+            <MyView style={styles.sectionHeader}>
               <View style={{ flexDirection: "row", alignItems: "center", }}>
                 <TextSubtitle style={styles.subtitle}>
                   Images
                 </TextSubtitle>
                 {this.state.selectedPhotos.length !== 0 && !this.state.isEditingPhotos &&
-                <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ isEditingPhotos: true, photoSize: (this.windowWidth-3*3-this.paddingWhenEditing*2-47)/4 })}>
-                  <MyText style={{ color: Colors.orange, fontWeight: "600", }}>Edit</MyText>
+                <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ isEditingPhotos: true, photoSize: (this.photosContainerWidth-this.paddingWhenEditing*2)/4 })}>
+                  <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Edit</MyText>
                 </TouchableOpacity>}
                 {this.state.isEditingPhotos &&
-                <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ isEditingPhotos: false, selectedEditPhotos: [], photoSize: (this.windowWidth-3*3-47)/4 })}>
-                  <MyText style={{ color: Colors.orange, fontWeight: "600", }}>Done</MyText>
+                <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ isEditingPhotos: false, selectedEditPhotos: [], photoSize: (this.photosContainerWidth)/4 })}>
+                  <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Done</MyText>
                 </TouchableOpacity>}
                 {this.state.isEditingPhotos && this.state.selectedEditPhotos.length !== 0 &&
                 <TouchableOpacity style={styles.photoSectionButton} onPress={this.removePhotosHandler}>
-                  <MyText style={{ color: Colors.orange, fontWeight: "600", }}>Remove selected</MyText>
+                  <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Remove selected</MyText>
                 </TouchableOpacity>}
                 {this.state.isEditingPhotos && this.state.selectedEditPhotos.length === 0 &&
                 <TouchableOpacity style={styles.photoSectionButton} onPress={() => this.setState({ selectedPhotos: [], isEditingPhotos: false })} >
-                  <MyText style={{ color: Colors.orange, fontWeight: "600", }}>Clear</MyText>
+                  <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Clear</MyText>
                 </TouchableOpacity>}
               </View>
               <View>
@@ -363,7 +365,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: Colors.orange,
+    backgroundColor: "white",
     width: "100%",
     height: DefaultStyles.headerHeight,
     paddingTop: DefaultStyles.headerPaddingTop,
@@ -380,12 +382,12 @@ const styles = StyleSheet.create({
     height: 50,
   },
   section: {
-    paddingLeft: 15,
+    // paddingLeft: DefaultStyles.standardPadding,
     paddingBottom: 20,
-    borderLeftWidth: 2,
-    borderLeftColor: Colors.yellow_tint,
-    marginLeft: 15,
-    marginRight: 15,
+    // borderLeftWidth: 2,
+    borderLeftColor: "#f0f0f0",
+    marginLeft: DefaultStyles.standardPadding,
+    marginRight: DefaultStyles.standardPadding,
   },
   subtitle: {
 
