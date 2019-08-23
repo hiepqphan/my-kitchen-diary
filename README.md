@@ -28,7 +28,7 @@
 
 ## Description
 **My kitchen diary** is built using <a href="https://github.com/facebook/react-native" target="_blank" rel="noopener noreferrer">React Native</a>
-and development tool <a href="https://github.com/expo/expo-cli" target="_blank" rel="noopener noreferrer">Expo CLI</a>. The app functions 
+and development tool <a href="https://github.com/expo/expo-cli" target="_blank" rel="noopener noreferrer">Expo CLI</a>. The app functions
 as a diary for cooking enthusiasts, letting them enter and save recipes and follow along a recipe to cook a meal, which upon completion
 can be saved along with notes, images and/or videos. All user data (created recipe, cooked meals, etc.) are stored on Google's Firebase.
 
@@ -49,11 +49,11 @@ Editable options for a recipe:
 Can be empty. Doesn't have to be unique.
 
 **Tags**:
-Available tags include `appetizer, main course, dessert, drink, cake, noodles, pasta, bread, breakfast, lunch, dinner`. This is mainly for
+Available tags include `appetizer, main course, dessert, drink, other`. This is mainly for
 filtering.
 
 **Ingredients**:
-Each ingredient has ingredient name and quanity.
+Each ingredient has ingredient name and quantity.
 
 **Instructions**:
 A text specifying the instructions for this recipe.
@@ -65,10 +65,13 @@ User can choose images and/or videos from their phone to upload along with the r
 Recipes are displayed as a list on the home screen, with recipe title, a thumbnail (if an image was uploaded with the recipe upon creation),
 and preview tags.
 
+Expected functions:<br>
+**filter**: using tags, recipe name (search)<br>
+**display "special" recipes**: recently added, recently viewed, most cooked, highest rated.
+
 ## Features in development
 ### Edit Recipe
-The base for this feature is ready, which includes: swiping left gesture to show delete button, sending data of clicked recipe to render its
-information in another screen.
+This feature should allow users to edit existing recipes and/or delete a recipe.
 ### Follow a recipe
 This should be developed after "viewing a recipe" feature is finished.
 
