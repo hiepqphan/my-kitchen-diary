@@ -4,13 +4,16 @@ import { StyleSheet, Text, View, FlatList, Modal,
          Animated, Dimensions, Image, } from "react-native";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
+import SvgUri from "react-native-svg-uri";
 
 import Firebase, { FirebaseContext } from "../Firebase";
 import Header from "./Header/header";
-import { DefaultStyles, Paths } from "../Const/const";
+import { DefaultStyles, Paths, Colors } from "../Const/const";
+import { IconHome, IconBowl } from "../../icons/icons";
 import RecipeItem from "./RecipeItem/recipe-item";
 import Auth from "../Authentication/authentication";
 import RecipeView from "./RecipeView/recipe-view";
+import MyText from "../UI/Text/text";
 
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -24,18 +27,11 @@ export default class HomeScreen extends Component {
                    indicatorShift: new Animated.Value(0),
                    loadingRecipes: false, };
 
-    this.focusListener = this.props.navigation.addListener("didFocus", this.animateNavbar);
     this.cachedRecipes = {};
-
-    this.props.navigation.setParams({ fromOtherTab: false, });
   }
 
   componentDidMount() {
     this.getOneRecipePage();
-  }
-
-  componentWillUnmount() {
-    this.focusListener.remove();
   }
 
   render() {
@@ -50,22 +46,6 @@ export default class HomeScreen extends Component {
                                                                 showRecipe={this.showRecipe}/> }
                     onEndReached={this.getOneRecipePage}/>
         </View>
-
-        <View style={styles.navbar}>
-          <Animated.View style={[styles.indicator, { transform: [{translateX: this.state.indicatorShift}] }]}/>
-          <View style={styles.navbarOption}>
-            <TouchableOpacity style={styles.navbarButton} activeOpacity={1}>
-
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.navbarOption}>
-            <TouchableOpacity style={styles.navbarButton} onPress={this.goToCookedMealScreen} activeOpacity={1}>
-
-            </TouchableOpacity>
-          </View>
-        </View>
-
       </View>
     );
   }
@@ -132,19 +112,6 @@ export default class HomeScreen extends Component {
 
   }
 
-  animateNavbar = () => {
-    let parent = this.props.navigation.dangerouslyGetParent();
-    if (parent && parent.getParam("fromOtherTab")) {
-      parent.setParams({ fromOtherTab: false });
-      this.state.indicatorShift.setValue(DefaultStyles.navbarIndicatorWidth*2);
-      Animated.timing(this.state.indicatorShift, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    }
-  }
-
   openCreateRecipe = () => {
     this.props.navigation.navigate("CreateRecipe");
   }
@@ -173,11 +140,6 @@ export default class HomeScreen extends Component {
                                                  needCached: needCached,
                                                  cacheAssets: this.cacheRecipeAssets, });
     });
-  }
-
-  goToCookedMealScreen = () => {
-    this.props.navigation.navigate("Meal");
-
   }
 
 }
@@ -210,9 +172,15 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   navbarButton: {
-    backgroundColor: "azure",
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
     width: "50%",
     height: "100%",
+  },
+  navbarText: {
+    position: "relative",
+    // top: 3,
   },
   indicator: {
     position: "absolute",

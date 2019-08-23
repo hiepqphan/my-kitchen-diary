@@ -20,8 +20,17 @@ let Icons = {
   paperTorn: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 451.6 429.99"><title>paper_torn</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path fill="#ddd" d="M141.57,430h-.71a23.23,23.23,0,0,1-21.75-16.45L74.93,273.12a4.28,4.28,0,0,0-7.75-.93l-23.54,39a23.26,23.26,0,0,1-24.12,11C8.11,320.2,0,309.91,0,298.32V23.67A23.67,23.67,0,0,1,23.67,0H427.93A23.67,23.67,0,0,1,451.6,23.67v346.7a23.51,23.51,0,0,1-45.93,7.08l-26.81-84.91a4.29,4.29,0,0,0-7.66-1.07l-63.72,96.09a23.51,23.51,0,0,1-40.62-2.48l-48-96a4.28,4.28,0,0,0-7.83.4L163.52,414.81A23.22,23.22,0,0,1,141.57,430ZM72.7,234.54a23.76,23.76,0,0,1,2.9.18A23.24,23.24,0,0,1,95.23,251L138,387.09a4.28,4.28,0,0,0,8.09.23l46.06-121.51a23.51,23.51,0,0,1,43-2.18L284.88,363a4.28,4.28,0,0,0,7.4.45l65.09-98.15a23.5,23.5,0,0,1,42,5.92l17.85,56.53a4.28,4.28,0,0,0,8.37-1.29V31.06A5.07,5.07,0,0,0,420.54,26H31.06A5.07,5.07,0,0,0,26,31.06V274.71a4.28,4.28,0,0,0,8,2.22l18.72-31A23.22,23.22,0,0,1,72.7,234.54Z"/><rect fill="#ddd" x="81.84" y="77.03" width="287.93" height="16.58" rx="8.29"/><rect fill="#ddd" x="81.84" y="156.69" width="287.93" height="16.58" rx="8.29"/></g></g></svg>`,
 
   circle: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><defs><style>.cls-1{fill:#3d3935;}</style></defs><title>circle</title><g fill="#ddd" id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><circle class="cls-1" cx="30" cy="30" r="30"/></g></g></svg>`,
+
+  carrot: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 129.23"><defs><style>.cls-1{fill:#fff;}</style></defs><title>ingredients_1</title><g fill="#ddd" id="Layer_2" data-name="Layer 2"><g fill="#ddd" id="Layer_1-2" data-name="Layer 1"><path fill="#ddd" class="cls-1" d="M29.51,20.46l5-10.79a3.87,3.87,0,0,0-7-3.27l-3.7,7.93V3.87a3.87,3.87,0,1,0-7.73,0V14.36L12.38,6.41a3.87,3.87,0,0,0-7,3.27L10.41,20.5C4.21,23.22,0,31.75,0,58.51c0,39.06,9,70.72,20,70.72S40,97.57,40,58.51C40,31.62,35.75,23.14,29.51,20.46Z"/></g></g></svg>`,
+
+  home: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 106.2 89.39"><title>home</title><g fill="#ddd" id="Layer_2" data-name="Layer 2"><g fill="#ddd" id="Layer_1-2" data-name="Layer 1"><path fill="#ddd" d="M103.19,44.35H96.1a3.21,3.21,0,0,0-3,3.38V86a3.2,3.2,0,0,1-3,3.38h-24a3.2,3.2,0,0,1-3-3.38V59a3.21,3.21,0,0,0-3-3.38h-14a3.21,3.21,0,0,0-3,3.38V86a3.2,3.2,0,0,1-3,3.38h-24a3.2,3.2,0,0,1-3-3.38V47.73a3.21,3.21,0,0,0-3-3.38H3c-3,0-4.14-4.33-1.67-6.19L51.44.57a2.7,2.7,0,0,1,3.32,0l50.1,37.59C107.33,40,106.16,44.35,103.19,44.35Z" style="fill:#fff"/></g></g></svg>`,
+
+  bowl: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 99.82 50"><title>bowl</title><g fill="#ddd" id="Layer_2" data-name="Layer 2"><g fill="#ddd" id="Layer_1-2" data-name="Layer 1"><path fill="#ddd" d="M99.81,3.15a3,3,0,0,0-3-3.15H3A3,3,0,0,0,0,3.15,49.87,49.87,0,0,0,19.93,40h0v7a3,3,0,0,0,3,3h54a3,3,0,0,0,3-3V40h0A49.94,49.94,0,0,0,99.81,3.15Z" style="fill:#fff"/></g></g></svg>`,
 };
 
+export const IconBowl = Icons.bowl;
+export const IconHome = Icons.home;
+export const IconCarrot = Icons.carrot;
 export const IconCircle = Icons.circle;
 export const IconPlus = Icons.plus;
 export const IconCamera = Icons.camera;

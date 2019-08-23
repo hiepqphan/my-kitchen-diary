@@ -16,6 +16,7 @@ const Data = {
     standardLightGray: "rgb(229, 229, 234)",
     listItemHeight: 100,
     navbarIndicatorWidth: Dimensions.get("window").width / 4,
+    navbarHeight: 60,
   },
   colors: {
     turquoise: "#35d0ba",

@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Video } from "expo-av";
 
 import { DefaultStyles, Screen, Colors } from "../../Const/const";
-import { IconChevronLeft, IconChevronUp } from "../../../icons/icons";
+import { IconChevronLeft, IconChevronUp, IconCarrot } from "../../../icons/icons";
 import Auth from "../../Authentication/authentication";
 import IngredientItem from "../CreateRecipe/IngredientItem/ingredient-item";
 import ImageView from "../../Utilities/ImagePicker/ImageView/image-view";
@@ -42,6 +42,8 @@ export default class RecipeView extends Component {
       onMoveShouldSetPanResponder: (event) => true,
       onPanResponderMove: this.scrollToTopHandler,
     });
+
+    this.fullHeight = Screen.height - DefaultStyles.navbarHeight;
   }
 
   componentDidMount() {
@@ -63,7 +65,7 @@ export default class RecipeView extends Component {
     ));
 
     return (
-      <ScrollView style={{  }} snapToOffsets={[Screen.height]} decelerationRate="fast" showsVerticalScrollIndicator={false}
+      <ScrollView style={{  }} snapToOffsets={[this.fullHeight]} decelerationRate="fast" showsVerticalScrollIndicator={false}
                   onScroll={this.scrollControl} scrollEnabled={this.state.scrollEnabled}
                   ref={(ref) => this.scrollView = ref}>
         <View style={styles.fullheight}>
@@ -85,7 +87,7 @@ export default class RecipeView extends Component {
                     renderItem={this.state.photos.length > 0 ? this.renderImage : this.renderImageDefault}
                     snapToInterval={Screen.width}
                     decelerationRate="fast"/> :
-          <Video source={{ uri: "" }} style={{ width: Screen.width, height: Screen.height }} resizeMode="cover"
+          <Video source={{ uri: "" }} style={{ width: Screen.width, height: this.fullHeight }} resizeMode="cover"
                  useNativeControls={false} shouldPlay isLooping/>}
 
           <LinearGradient colors={["rgba(255, 255, 255, 0.0)", "rgba(255, 255, 255, 1.0)"]}
@@ -112,7 +114,8 @@ export default class RecipeView extends Component {
             <Animated.View style={{ ...styles.indicator, top: this.state.indicatorTop, width: this.state.indicatorWidth, transform: [{ translateX: this.state.indicatorShift }], }}/>
 
             <TouchableOpacity style={styles.navbarOption} onPress={this.ingredientsOnPress}>
-              <MyText style={{ color: this.state.currentView === "ingredients" ? Colors.orange : Colors.gray, fontWeight: "500", }}>Ingredients</MyText>
+              <SvgUri svgXmlData={IconCarrot} width="5" height="15" fill={this.state.currentView === "ingredients" ? Colors.orange : Colors.gray}/>
+              <MyText style={{ color: this.state.currentView === "ingredients" ? Colors.orange : Colors.gray, fontWeight: "500", marginLeft: 3 }}>Ingredients</MyText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navbarOption} onPress={this.instructionsOnPress}>
               <MyText style={{ color: this.state.currentView === "instructions" ? Colors.orange : Colors.gray, fontWeight: "500" }}>
@@ -186,7 +189,7 @@ export default class RecipeView extends Component {
 
   scrollControl = (event) => {
     let pos = event.nativeEvent.contentOffset.y;
-    if (pos >= Screen.height/2)
+    if (pos >= this.fullHeight/2)
       this.setState({ scrollEnabled: false });
     else
       this.setState({ scrollEnabled: true });
@@ -205,7 +208,7 @@ export default class RecipeView extends Component {
   renderImage = ({item}) => {
     return (
       <View>
-        <Image source={{ uri: item.node.image.uri, cache: "force-cache", }} style={{ width: Screen.width, height: Screen.height }}/>
+        <Image source={{ uri: item.node.image.uri, cache: "force-cache", }} style={{ width: Screen.width, height: this.fullHeight }}/>
       </View>
     );
   }
@@ -213,7 +216,7 @@ export default class RecipeView extends Component {
   renderImageDefault = ({item}) => {
     return (
       <View>
-        <Image source={require("../../../images/default_recipe_photo.png")} style={{ width: Screen.width, height: Screen.height }}/>
+        <Image source={require("../../../images/default_recipe_photo.png")} style={{ width: Screen.width, height: this.fullHeight }}/>
       </View>
     )
   }
@@ -225,7 +228,7 @@ const styles = StyleSheet.create({
     position: "relative",
     top: 0,
     left: 0,
-    height: Screen.height,
+    height: Screen.height - DefaultStyles.navbarHeight,
   },
   container: {
     flex: 1,
@@ -263,6 +266,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.lightgray,
   },
   navbarOption: {
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     width: "40%",
