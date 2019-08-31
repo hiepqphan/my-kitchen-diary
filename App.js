@@ -11,27 +11,6 @@ import RecipeView from "./assets/components/HomeScreen/RecipeView/recipe-view";
 import CookedMealScreen from "./assets/components/CookedMealScreen/cooked-meal-screen";
 import MainScreensContainer from "./assets/components/MainScreensContainer/main-screens-container";
 
-const HomeScreenNavigator = createStackNavigator({
-  Home: HomeScreen,
-  CreateRecipe: CreateRecipeScreen,
-  Recipe: RecipeView,
-},
-{
-  initialRouteName: "Home",
-  headerMode: "none",
-});
-
-const MainTabNavigator = createBottomTabNavigator({
-  Home: HomeScreenNavigator,
-  Meal: CookedMealScreen,
-},
-{
-  initialRouteName: "Home",
-  defaultNavigationOptions: {
-    tabBarVisible: false,
-  }
-});
-
 const AppNavigator = createStackNavigator({
   Loading: LoadingScreen,
   Login: LoginScreen,

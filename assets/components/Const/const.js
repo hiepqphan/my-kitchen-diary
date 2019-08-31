@@ -15,7 +15,7 @@ const Data = {
     standardBlack: "#ddd",
     standardLightGray: "rgb(229, 229, 234)",
     listItemHeight: 100,
-    navbarIndicatorWidth: Dimensions.get("window").width / 4,
+    navbarIndicatorWidth: Dimensions.get("window").width / 3 / 2,
     navbarHeight: 60,
   },
   colors: {
@@ -27,6 +27,7 @@ const Data = {
     orange: "#ff9234",
     orange_tint: "#ffb070",
     lightgray: "rgb(229, 229, 234)",
+    lightlightgray: "#fbfbfb",
     gray: "rgb(199, 199, 204)",
     black: "#3d3935",
   },

@@ -4,37 +4,30 @@ import { View, Text, Animated, StyleSheet,
 import SvgUri from "react-native-svg-uri";
 
 import { DefaultStyles, Colors } from "../Const/const";
-import MyText from "../UI/Text/text";
-import { IconHome, IconBowl } from "../../icons/icons";
+import MyText, { TextTitle } from "../UI/Text/text";
+import { IconPlus } from "../../icons/icons";
 
 export default class CookedMealScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { indicatorShift: new Animated.Value(-DefaultStyles.navbarIndicatorWidth*2), };
+    this.state = {  };
 
-    this.focusListener = this.props.navigation.addListener("didFocus", this.animateNavbar);
   }
 
   componentWillUnmount() {
     this.focusListener.remove();
   }
 
-  animateNavbar = () => {
-    this.state.indicatorShift.setValue(-DefaultStyles.navbarIndicatorWidth*2);
-    Animated.timing(this.state.indicatorShift, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  }
-
-  goToHomeScreen = () => {
-    this.props.navigation.navigate("Home", { fromOtherTab: true });
-  }
-
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.header}>
+          <TextTitle>Meals</TextTitle>
+          <TouchableOpacity onPress={this.props.createMealHandler} activeOpacity={1} style={styles.addButtonContainer}>
+            <SvgUri style={styles.addButton} width="25" height="25" svgXmlData={IconPlus} fill={Colors.orange}/>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.body}>
 
         </View>
@@ -55,7 +48,27 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   header: {
-
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "white",
+    width: "100%",
+    height: DefaultStyles.headerHeight,
+    paddingTop: DefaultStyles.headerPaddingTop,
+    paddingLeft: DefaultStyles.standardPadding,
+    // borderBottomWidth: 0.5,
+    borderBottomColor: DefaultStyles.standardBlack,
+  },
+  addButtonContainer: {
+    justifyContent: "center",
+    alignItems: "flex-end",
+    width: 35,
+    height: 35,
+    paddingRight: DefaultStyles.standardPadding,
+  },
+  addButton: {
+    width: 25,
+    height: 25,
   },
   body: {
     flex: 1,

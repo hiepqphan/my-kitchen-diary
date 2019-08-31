@@ -12,10 +12,10 @@ export default class MealTypeItem extends Component {
 
   render() {
     return(
-      <View style={[this.props.style].concat([ { opacity: this.props.isSelected ? 1 : 0.5 } ])}>
-        <TouchableOpacity style={styles.container} onPress={() => this.props.onPressHandler(this.props.name)}
+      <View style={[this.props.style]}>
+        <TouchableOpacity style={[styles.container].concat([ !this.props.isSelected && styles.notSelected ])} onPress={() => this.props.onPressHandler(this.props.name)}
                           activeOpacity={1}>
-          <MyText style={{ color: "white" }}>{this.props.name}</MyText>
+          <MyText style={{ color: this.props.isSelected ? "white" : Colors.orange }}>{this.props.name}</MyText>
         </TouchableOpacity>
       </View>
     );
@@ -31,6 +31,13 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingBottom: 5,
     paddingLeft: 10,
+    borderWidth: 2,
+    borderColor: Colors.orange,
     borderRadius: 20,
+  },
+  notSelected: {
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: Colors.orange,
   }
 })

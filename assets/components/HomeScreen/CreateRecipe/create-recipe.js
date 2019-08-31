@@ -12,7 +12,8 @@ import MealTypeItem from "./MealTypeItem/meal-type-item";
 import Ingredient from "./IngredientItem/ingredient-item";
 import ImagePicker from "../../Utilities/ImagePicker/image-picker";
 import ImageView from "../../Utilities/ImagePicker/ImageView/image-view";
-import { IconCamera, IconPlus, IconMinusRound, IconChevronLeft } from "../../../icons/icons";
+import { IconCamera, IconPlus, IconMinusRound, IconChevronLeft,
+         IconPen } from "../../../icons/icons";
 import Auth from "../../Authentication/authentication";
 import KeyboardSafeView from "../../UI/KeyboardSafeView/keyboard-safe-view";
 import LoadingOverlay from "../../UI/LoadingOverlay/loading-overlay";
@@ -127,7 +128,7 @@ export default class CreateRecipe extends Component {
                 Ingredients
               </TextSubtitle>
               <TouchableOpacity style={styles.editButton} onPress={() => this.setState({ showIngredientsModal: true })}>
-                <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Edit</MyText>
+                <SvgUri svgXmlData={IconPen} width="20" height="20" fill={Colors.orange}/>
               </TouchableOpacity>
             </MyView>
             <View style={styles.sectionBody}>
@@ -146,7 +147,7 @@ export default class CreateRecipe extends Component {
                 Instructions
               </TextSubtitle>
               <TouchableOpacity style={styles.editButton} onPress={() => this.setState({ showInstructionsModal: true })}>
-                <MyText style={{ color: Colors.orange, fontWeight: "500", }}>Edit</MyText>
+                <SvgUri svgXmlData={IconPen} width="20" height="20" fill={Colors.orange}/>
               </TouchableOpacity>
             </MyView>
             <View style={[styles.sectionBody, { paddingBottom: this.state.instructionsInputSelected ? 10 : 0 }]}>
@@ -355,7 +356,7 @@ export default class CreateRecipe extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: Colors.lightlightgray,
     width: "100%",
   },
   header: {
@@ -382,18 +383,21 @@ const styles = StyleSheet.create({
     height: 50,
   },
   section: {
-    // paddingLeft: DefaultStyles.standardPadding,
-    paddingBottom: 20,
+    backgroundColor: "white",
+    padding: DefaultStyles.standardPadding,
+    paddingLeft: DefaultStyles.standardPadding,
+    paddingRight: DefaultStyles.standardPadding,
+    // paddingBottom: 40,
     // borderLeftWidth: 2,
-    borderLeftColor: "#f0f0f0",
-    marginLeft: DefaultStyles.standardPadding,
-    marginRight: DefaultStyles.standardPadding,
+    // marginLeft: DefaultStyles.standardPadding,
+    // marginRight: DefaultStyles.standardPadding,
+    marginBottom: 10,
   },
   subtitle: {
 
   },
   topsection: {
-    marginTop: DefaultStyles.headerHeight+20,
+    marginTop: DefaultStyles.headerHeight,
   },
   ingredient: {
     marginTop: 10,
@@ -415,6 +419,11 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   editButton: {
-
+    justifyContent: "center",
+    alignItems: "center",
+    // backgroundColor: Colors.orange,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
   }
 });

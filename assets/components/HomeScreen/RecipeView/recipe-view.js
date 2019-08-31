@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Video } from "expo-av";
 
 import { DefaultStyles, Screen, Colors } from "../../Const/const";
-import { IconChevronLeft, IconChevronUp, IconCarrot } from "../../../icons/icons";
+import { IconChevronLeft, IconChevronUp, IconCarrot, IconSpatula } from "../../../icons/icons";
 import Auth from "../../Authentication/authentication";
 import IngredientItem from "../CreateRecipe/IngredientItem/ingredient-item";
 import ImageView from "../../Utilities/ImagePicker/ImageView/image-view";
@@ -69,14 +69,19 @@ export default class RecipeView extends Component {
                   onScroll={this.scrollControl} scrollEnabled={this.state.scrollEnabled}
                   ref={(ref) => this.scrollView = ref}>
         <View style={styles.fullheight}>
-          <View style={{ ...styles.header, position: "absolute", top: 0, left: 0, zIndex: 2, backgroundColor: "none" }}>
+          <View style={{ ...styles.header, position: "absolute", top: 0, left: 0, zIndex: 2, justifyContent: "space-between", backgroundColor: "none" }}>
             <View style={styles.option}>
               <TouchableOpacity onPress={this.closeView}>
-                <SvgUri svgXmlData={IconChevronLeft} width="20" height="20" fill="#ff6633"/>
+                <SvgUri svgXmlData={IconChevronLeft} width="20" height="20" fill={Colors.orange}/>
               </TouchableOpacity>
             </View>
             <View style={styles.option}>
-
+              <TouchableOpacity onPress={this.cookRecipeHandler} style={{ justifyContent: "center", alignItems: "center", backgroundColor: Colors.orange, width: 150, height: 34, borderRadius: 17, }}>
+                <LinearGradient colors={[ Colors.orange, Colors.yellow ]} start={[ 0, 1 ]} end={[ 1, 0 ]}
+                                style={{ justifyContent: "center", alignItems: "center", width: "100%", height: "100%", borderRadius: 17 }}>
+                  <MyText style={{ color: "white" }}>Cook this recipe</MyText>
+                </LinearGradient>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -90,14 +95,19 @@ export default class RecipeView extends Component {
           <Video source={{ uri: "" }} style={{ width: Screen.width, height: this.fullHeight }} resizeMode="cover"
                  useNativeControls={false} shouldPlay isLooping/>}
 
-          <LinearGradient colors={["rgba(255, 255, 255, 0.0)", "rgba(255, 255, 255, 1.0)"]}
-                          style={{ position: "absolute", left: 0, bottom: 0, zIndex: 2, width: "100%", height: 200 }}/>
+          {false && <LinearGradient colors={["rgba(255, 255, 255, 0.0)", "rgba(255, 255, 255, 1.0)"]}
+                          style={{ position: "absolute", left: 0, bottom: 0, zIndex: 2, width: "100%", height: 200 }}/>}
 
-          <View style={{ position: "absolute", left: 0, bottom: 0, zIndex: 3, width: "100%",
-                         padding: 10, paddingTop: 0, paddingBottom: 40 }}>
+          <View style={{ position: "absolute", left: 0, bottom: 0, zIndex: 3, backgroundColor: "white",
+                         width: "100%", maxHeight: (Screen.height-DefaultStyles.navbarHeight)/3,
+                         padding: 20, paddingTop: 10, paddingBottom: 30, borderTopLeftRadius: 5, borderTopRightRadius: 5, }}>
+            <View style={{ justifyContent: "center", alignItems: "center", width: "100%" }}>
+              <View style={{ backgroundColor: DefaultStyles.standardBlack, width: 35, height: 8, borderRadius: 4, marginBottom: 5, }}/>
+            </View>
+
             {this.state.recipeTitle !== "" ?
             <Text style={{ fontSize: 25 }}>{this.state.recipeTitle}</Text> :
-            <Text style={{ fontSize: 25, fontStyle: "italic" }}>No title</Text>}
+            <Text style={{ fontSize: 25, fontStyle: "italic" }} numberOfLines={3}>No title</Text>}
           </View>
         </View>
 
@@ -114,11 +124,12 @@ export default class RecipeView extends Component {
             <Animated.View style={{ ...styles.indicator, top: this.state.indicatorTop, width: this.state.indicatorWidth, transform: [{ translateX: this.state.indicatorShift }], }}/>
 
             <TouchableOpacity style={styles.navbarOption} onPress={this.ingredientsOnPress}>
-              <SvgUri svgXmlData={IconCarrot} width="5" height="15" fill={this.state.currentView === "ingredients" ? Colors.orange : Colors.gray}/>
+              <SvgUri svgXmlData={IconCarrot} width="5" height="20" fill={this.state.currentView === "ingredients" ? null : Colors.gray}/>
               <MyText style={{ color: this.state.currentView === "ingredients" ? Colors.orange : Colors.gray, fontWeight: "500", marginLeft: 3 }}>Ingredients</MyText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navbarOption} onPress={this.instructionsOnPress}>
-              <MyText style={{ color: this.state.currentView === "instructions" ? Colors.orange : Colors.gray, fontWeight: "500" }}>
+              <SvgUri svgXmlData={IconSpatula} width="5" height="20" fill={this.state.currentView === "instructions" ? null : Colors.gray}/>
+              <MyText style={{ color: this.state.currentView === "instructions" ? Colors.orange : Colors.gray, fontWeight: "500", marginLeft: 3 }}>
                 Instructions
               </MyText>
             </TouchableOpacity>
@@ -128,7 +139,6 @@ export default class RecipeView extends Component {
             {this.state.currentView === "ingredients" &&
             <View style={styles.section}>
               <View style={styles.subheader}>
-                {false && <TextSubtitle style={styles.subtitle}>Ingredients</TextSubtitle>}
               </View>
 
               <View style={styles.subbody}>
@@ -140,7 +150,6 @@ export default class RecipeView extends Component {
             {this.state.currentView === "instructions" &&
             <View style={{ ...styles.section, }}>
               <View style={styles.subheader}>
-                {false && <TextSubtitle style={styles.subtitle}>Instructions</TextSubtitle>}
               </View>
 
               <View style={styles.subbody}>
@@ -149,8 +158,17 @@ export default class RecipeView extends Component {
                 <NotFoundInstructions/>}
               </View>
             </View>}
-
           </ScrollView>
+
+          <View style={{ position: "absolute", bottom: 10, left: (Screen.width - 150)/2, backgroundColor: "none", }}>
+            <TouchableOpacity onPress={this.cookRecipeHandler} style={{ justifyContent: "center", alignItems: "center", backgroundColor: "null", width: 150, height: 34, borderRadius: 17, }}>
+              <LinearGradient colors={[ Colors.orange, Colors.yellow ]} start={[ 0, 1 ]} end={[ 1, 0 ]}
+                              style={{ justifyContent: "center", alignItems: "center", width: "100%", height: "100%", borderRadius: 17 }}>
+                <MyText style={{ color: "white" }}>Cook this recipe</MyText>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
         </View>
       </ScrollView>
     );
@@ -285,8 +303,6 @@ const styles = StyleSheet.create({
   },
   option: {
     justifyContent: "center",
-    width: 50,
-    height: 50,
   },
   section: {
     padding: 0,

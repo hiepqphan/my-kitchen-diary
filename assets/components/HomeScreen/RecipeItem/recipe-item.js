@@ -55,13 +55,13 @@ export default class RecipeItem extends Component {
     console.log(gestureState.vx);
     if (!this.state.animating) {
       this.setState({ animating: true });
-      if (this.state.swipingDir === "left")
+      if (this.state.swipingDir === "left" && gestureState.vx < -0.5)
         Animated.spring(this.state.deleteButtonWidth, {
           toValue: -DefaultStyles.listItemHeight,
           bounciness: Math.max(5,Math.min(-8*gestureState.vx,15)),
           useNativeDriver: true,
         }).start(() => this.setState({ animating: false, swiped: true }));
-      else
+      else if (this.state.swipingDir === "right")
         Animated.spring(this.state.deleteButtonWidth, {
           toValue: 0,
           bounciness: Math.max(5,Math.min(8*gestureState.vx,15)),

@@ -6,11 +6,12 @@ import SvgUri from "react-native-svg-uri";
 
 import { Screen, DefaultStyles, Colors } from "../Const/const";
 import MyText from "../UI/Text/text";
-import { IconHome, IconBowl } from "../../icons/icons";
+import { IconHome, IconBowl, IconPot } from "../../icons/icons";
 import HomeScreen from "../HomeScreen/home-screen";
 import CreateRecipeScreen from "../HomeScreen/CreateRecipe/create-recipe";
 import RecipeView from "../HomeScreen/RecipeView/recipe-view";
 import CookedMealScreen from "../CookedMealScreen/cooked-meal-screen";
+import CreateMealView from "../CreateMeal/create-meal-view";
 
 const HomeScreenNavigator = createStackNavigator({
   Home: HomeScreen,
@@ -25,6 +26,7 @@ const HomeScreenNavigator = createStackNavigator({
 const MainTabNavigator = createBottomTabNavigator({
   Home: HomeScreenNavigator,
   Meal: CookedMealScreen,
+  Cooking: CreateMealView,
 },
 {
   initialRouteName: "Home",
@@ -44,7 +46,8 @@ export default class MainScreensContainer extends Component {
                    currentView: "Home", };
 
     this.targetShift = { "Home": 0,
-                         "Meal": DefaultStyles.navbarIndicatorWidth*2 };
+                         "Meal": DefaultStyles.navbarIndicatorWidth*2,
+                         "Cooking": DefaultStyles.navbarIndicatorWidth*4, };
   }
 
   render() {
@@ -58,15 +61,22 @@ export default class MainScreensContainer extends Component {
         <Animated.View style={[styles.indicator, { transform: [{translateX: this.state.indicatorShift}] }]}/>
         <View style={styles.navbarOption}>
           <TouchableOpacity style={styles.navbarButton} onPress={this.goToHomeScreen} activeOpacity={1}>
-            <SvgUri svgXmlData={IconHome} width="20" height="20" fill={this.state.currentView === "Home" ? Colors.orange : Colors.gray}/>
+            <SvgUri svgXmlData={IconHome} width="30" height="30" fill={this.state.currentView === "Home" ? Colors.orange : Colors.gray}/>
             <MyText style={{ ...styles.navbarText, color: this.state.currentView === "Home" ? Colors.orange : Colors.gray, }}>Recipes</MyText>
           </TouchableOpacity>
         </View>
 
         <View style={styles.navbarOption}>
           <TouchableOpacity style={styles.navbarButton} onPress={this.goToCookedMealScreen} activeOpacity={1}>
-            <SvgUri svgXmlData={IconBowl} width="20" height="20" fill={this.state.currentView === "Meal" ? Colors.orange : Colors.gray}/>
-            <MyText style={{ ...styles.navbarText, color: this.state.currentView === "Meal" ? Colors.orange : Colors.gray, }}>Meals</MyText>
+            <SvgUri svgXmlData={IconPot} width="35" height="30" fill={this.state.currentView === "Meal" ? Colors.orange : Colors.gray}/>
+            <MyText style={{ ...styles.navbarText, color: this.state.currentView === "Meal" ? Colors.orange : Colors.gray, }}>My diary</MyText>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.navbarOption}>
+          <TouchableOpacity style={styles.navbarButton} onPress={this.goToCookingScreen} activeOpacity={1}>
+            <SvgUri svgXmlData={IconPot} width="35" height="30" fill={this.state.currentView === "Cooking" ? Colors.orange : Colors.gray}/>
+            <MyText style={{ ...styles.navbarText, color: this.state.currentView === "Cooking" ? Colors.orange : Colors.gray, }}>Cooking</MyText>
           </TouchableOpacity>
         </View>
       </View>
@@ -84,6 +94,12 @@ export default class MainScreensContainer extends Component {
     this.setState({ currentView: "Meal" });
     this.props.navigation.navigate("Meal");
     this.animateNavbar("Meal");
+  }
+
+  goToCookingScreen = () => {
+    this.setState({ currentView: "Cooking" });
+    this.props.navigation.navigate("Cooking");
+    this.animateNavbar("Cooking");
   }
 
   animateNavbar = (screen) => {
@@ -127,7 +143,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 2,
     top: 0,
-    left: DefaultStyles.navbarIndicatorWidth/2,
+    left: Screen.width/3/4,
     width: DefaultStyles.navbarIndicatorWidth,
     borderTopWidth: 4,
     borderTopColor: Colors.orange,
