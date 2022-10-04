@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "expo": "^33.0.0",
+    "expo": "^46.0.14",
     "expo-asset": "^6.0.0",
     "expo-av": "^5.0.2",
     "expo-facebook": "^5.0.1",
